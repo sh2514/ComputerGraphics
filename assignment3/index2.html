@@ -30,8 +30,8 @@ Assignment 3
    uniform vec3  uCursor;
    varying vec3  vPosition;
 
-   vec4 spheres[3];
-   vec3 materials[3];
+   vec4 sphere;
+   vec3 material;
 
    vec3 Lrgb;
    vec3 Ldir;
@@ -107,32 +107,14 @@ Assignment 3
       // YOU NEED TO SET x,y,z AND r FOR sphere.
       //float r = sqrt(vPosition.x * vPosition.x + vPosition.y * vPosition.y);
       float r = .5;
-      float modifier = 0.;
-      for (int i = 0; i < 3; i++) {
-        spheres[i] = vec4(0.75 - modifier, 0.75 - modifier, 3.5 - modifier, r);
-        modifier = modifier + .5;
-      }
-      spheres[1] = vec4(.5 - uCursor.z, -.4 + uCursor.z, 1.3, r);
-      //sphere = vec4(0., 0., 1.5, r);
+      sphere = vec4(0., 0., 1.5, r);
       // YOU NEED TO SET r,g,b FOR material.
-      materials[0] = vec3(0.5, 0.4, 0.5);
-      materials[1] = vec3(0.2, 0.2, 0.3);
-      materials[2] = vec3(0.7, 0.2, 0.4);
+      material = vec3(0.5, 0.4, 0.5);
 
       vec3 color = vec3(0., 0., 0.);
-
-      float t = raySphere(V, W, spheres[0]);
-      float t2 = raySphere(V, W, spheres[1]);
-      float t3 = raySphere(V, W, spheres[2]);
-
-      if (t < 10000. && t < t2 && t < t3)
-         color = shadeSphere(V + t * W, spheres[0], materials[0]);
-
-      if (t2 < 10000. && t2 < t && t2 < t3)
-         color = shadeSphere(V + t2 * W, spheres[1], materials[1]);
-
-      if (t3 < 10000. && t3 < t && t3 < t2)
-        color = shadeSphere(V + t3 * W, spheres[2], materials[2]);
+      float t = raySphere(V, W, sphere);
+      if (t < 10000.)
+         color = shadeSphere(V + t * W, sphere, material);
 
       gl_FragColor = vec4(sqrt(color), 1.); // Do Gamma correction.
    }
