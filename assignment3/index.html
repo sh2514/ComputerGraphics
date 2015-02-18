@@ -36,6 +36,9 @@ Assignment 3
    vec3 Lrgb;
    vec3 Ldir;
 
+   vec3 Lrgb2;
+   vec3 Ldir2;
+
    // Compute intersection of a ray with a sphere, if any.  Return t.
    // If there is no intersection, return 10000.
 
@@ -80,7 +83,7 @@ Assignment 3
       // USE A SIMPLE APPROXIMATION SUCH AS: ambient = material / 5.;
       vec3 ambient = material / 5.;
       vec3 normal = (point - sphere.xyz) / sphere.w;
-      color = ambient + Lrgb * material * max(0., dot(normal, Ldir));
+      color = ambient + (Lrgb * material * max(0., dot(normal, Ldir))) + (Lrgb2 * material * max(0., dot(normal, Ldir2)));
 
       return color;
    }
@@ -90,6 +93,9 @@ Assignment 3
 
       Lrgb = vec3(1.,.5,0.);
       Ldir = normalize(vec3(c.x, c.y, 1. - 2. * dot(c, c)));
+
+      Lrgb2 = vec3(sin(uTime), .2 + uCursor.z / 2., .7);
+      Ldir2 = normalize(vec3(c.y, c.x, 1. - 2. * dot(c, c)));
 
       // YOU NEED TO COMPUTE V AND W TO CREATE THE RAY FOR THIS PIXEL,
       // USING vPosition.x AND vPosition.y.
