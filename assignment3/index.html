@@ -44,14 +44,14 @@ Assignment 3
       // YOU NEED TO COMPUTE t, BY SETTING UP AND THEN SOLVING A QUADRATIC EQUATION.
       float a = dot(W, W);
       float b = 2. * dot(W, (V - S.xyz));
-      float c = dot((V - S.xyz), (V - S.xyz)) - pow(S.r, 2.);
+      float c = dot((V - S.xyz), (V - S.xyz)) - pow(S.w, 2.);
       float discriminant = pow(b, 2.) - 4. * a * c;
-      if (discriminant > 0.)
+      if (discriminant >= 0.)
       {
         float root1 = (-b + sqrt(discriminant)) / (2. * a);
         float root2 = (-b - sqrt(discriminant)) / (2. * a);
       
-        if (root1 > root2)
+        if (root1 >= root2)
         {
           return root1;
         }
@@ -79,7 +79,7 @@ Assignment 3
       // FOR THE AMBIENT COMPONENT OF THE DIFFUSE SHADING, YOU CAN
       // USE A SIMPLE APPROXIMATION SUCH AS: ambient = material / 5.;
       vec3 ambient = material / 5.;
-      vec3 normal = (point - sphere.xyz) / sphere.r;
+      vec3 normal = (point - sphere.xyz) / sphere.w;
       color = ambient + Lrgb * material * max(0., dot(normal, Ldir));
 
       return color;
@@ -96,12 +96,12 @@ Assignment 3
 
       vec3 V, W;
       V = vec3(0., 0., 0.);
-      W = normalize(vec3(vPosition.x, vPosition.y, 1.));
+      W = normalize(vec3(vPosition.x, vPosition.y, 2.5));
 
       // YOU NEED TO SET x,y,z AND r FOR sphere.
-      float r = sqrt(vPosition.x * vPosition.x + vPosition.y * vPosition.y);
-      //float r = 5.5;
-      sphere = vec4(0.5, 0.5, 1.5, r);
+      //float r = sqrt(vPosition.x * vPosition.x + vPosition.y * vPosition.y);
+      float r = .5;
+      sphere = vec4(0., 0., 1.5, r);
       // YOU NEED TO SET r,g,b FOR material.
       material = vec3(0.5, 0.4, 0.5);
 
