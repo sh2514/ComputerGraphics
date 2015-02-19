@@ -1,0 +1,109 @@
+<!--
+    Shikuan Huang
+    Professor Perlin
+    Computer Graphics
+    11, February 2015
+
+    Assignment 2
+
+    [Note: There is a ball hidden past the default view border in the graphic.  
+           Click to move the view farther to find it.]
+-->
+<script src=lib1.js></script>
+
+<canvas id='canvas1' width='640' height='640'></canvas>
+
+<script id='my_vertex_shader' type='x-shader/x-vertex'>
+   attribute vec3 aPosition;
+   varying   vec3 vPosition;
+   void main() {
+      gl_Position = vec4(aPosition, 1.0);
+      vPosition = aPosition;
+   }
+</script>
+
+<!!==========================================================================
+
+   Below is the fragment shader from class (with some slight improvements).
+
+   Your assignment is to write your own interesting fragment shader program.
+   Try to have fun with it -- use "uTime" to create animated patterns, and
+   "uCursor" to make it responsive to a user's mouse gestures.
+
+   Try to make something as completely different from my "easter egg" example
+   as possible :-)
+
+============================================================================>
+
+<script id='my_fragment_shader' type='x-shader/x-fragment'>
+   precision mediump float;
+   uniform float uTime;
+   uniform vec3  uCursor;
+   varying vec3  vPosition;
+   void main() {
+      vec3 color = vec3(0., 0., 0.);                    // Set background color black.
+      float x = (uCursor.z * 5. + 1.) * .5 * uCursor.x * 2. + vPosition.x;                            // Use only x and y coords of
+      float y = (uCursor.z * 5. + 1.) * .5 * uCursor.y * 2. + vPosition.y;                            //   the square's geometry.
+      float rr = (x * x + y * y) / pow(.5, 2.);         // Compute radius squared
+
+      // Color top part
+      if (y > .4)
+      {
+        color = vec3(.1, .35, .8);
+      }
+      
+      // Color bottom part
+      if (sqrt(x - 2. * y) > 0.)
+      {
+        color = vec3(.2, .4, 1);
+      }
+
+      // Color changing parabola
+      if ((x * x + .4 * x) < y + .4 && (x * x + .4 * x) > y + .3)
+      {
+        float z = sqrt(1. - rr);
+        float t = .2 + .5 * max(0., y + x + cos(uCursor.x));
+        color = vec3(t, t, sin(uTime));
+      }
+
+      // Red-blue sin graph
+      if (sin(x * 5.) > y + .2 && sin(x * 5.) < y + .4)
+      {
+        float z = sqrt(1. - rr);
+        float t = .3 + .5 * max(0., x + y + z);
+        color = vec3(x + y, x - y , x - y);
+      }
+      
+      float z = 0.;
+      
+      // Rotating Sphere
+      float rr2 = ((x + .5) * (x + .5) + (y - .3) * (y - .3)) / pow (.5, 2.);
+      float x2 = sin(uTime) + vPosition.x + .3;
+      float y2 = cos(uTime) + vPosition.y + .3;
+      if (rr2 < .5) {
+        float z2 = sqrt(1. - rr2);
+        float t2 = .2 + .6 * max(0., x2 + y2 + z2);
+        color = vec3(t2, t2, t2);
+        color.r *= .6 + .7 * sin(10. * x2 + tan(10. * y2) / tan(10.) + cos(10. * z2));
+      }
+      
+      // HIDDEN BALL - click and explore to find
+      float rr3 = ((x - 3.) * (x - 3.) + (y - 3.) * (y - 3.)) / pow (.5, 2.);
+      float x3 = vPosition.x - 3.;
+      float y3 = vPosition.y - 3.;
+      if (rr3 < .5) {
+        float z3 = sqrt(1. - rr3);
+        float t3 = .2 + .6 * max(0., x3 + y3 + z3);
+        color = vec3(t3, t3, t3);
+        color.r *= .6 + .7 * sin(10. * x3 + tan(10. * y3) / tan(10.) + cos(10. * z3));
+      }
+
+      gl_FragColor = vec4(color, 1.);
+   }
+</script>
+
+<script>
+start_gl('canvas1', document.getElementById('my_vertex_shader'  ).innerHTML,
+                    document.getElementById('my_fragment_shader').innerHTML);
+</script>
+
