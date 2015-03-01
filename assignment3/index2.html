@@ -74,12 +74,25 @@ Assignment 3
       }
    }
 
+   bool isInShadow(vec3 point, vec3 lightDir, int sNum) {
+     for (int i = 0; i < 3; i++) {
+       if (!(i == sNum)) {
+         float st = raySphere(point, lightDir, sphere[i]);
+         if (st < 10000.) {
+           return true;
+         }
+         
+       }
+     }
+    return false;
+   }
+
    // Diffusely shade a sphere.
    //    point is the x,y,z position of the surface point.
    //    sphere is the x,y,z,r definition of the sphere.
    //    material is the r,g,b color of the sphere.
 
-   vec3 shadeSphere(vec3 point, vec4 sphere, vec3 material, vec3 rayDir) {
+   vec3 shadeSphere(vec3 point, vec4 sphere, vec3 material, vec3 rayDir, int sNum) {
       vec3 color = vec3(0.,0.,0.);
 
       // YOU NEED TO COMPUTE COLOR FOR A DIFFUSELY SHADED SPHERE.
@@ -88,20 +101,25 @@ Assignment 3
       // USE A SIMPLE APPROXIMATION SUCH AS: ambient = material / 5.;
       vec3 ambient = material / 5.;
       
-      
-      vec3 normal = (point - sphere.xyz) / sphere.w;
+      bool inShadow = isInShadow(point + .01, Ldir[0], sNum);
+      if (inShadow) {
+        color = ambient;
+      }
+      else {
+        vec3 normal = (point - sphere.xyz) / sphere.w;
 
-      vec3 R0 = 2. * normal * dot(normal, Ldir[0]) - Ldir[0];
-      //vec3 R1 = 2. * normal * dot(normal, Ldir[1]) - Ldir[1];
-      vec3 SRrgb = material;
-      vec3 E = -rayDir;
-      vec3 specular0 = SRrgb * pow(max(0., dot(E, R0)), 40.);
-      //vec3 specular1 = SRrgb * pow(max(0., dot(E, R1)), 40.);
+        vec3 R0 = 2. * normal * dot(normal, Ldir[0]) - Ldir[0];
+        //vec3 R1 = 2. * normal * dot(normal, Ldir[1]) - Ldir[1];
+        vec3 SRrgb = material;
+        vec3 E = -rayDir;
+        vec3 specular0 = SRrgb * pow(max(0., dot(E, R0)), 40.);
+        //vec3 specular1 = SRrgb * pow(max(0., dot(E, R1)), 40.);
     
-      vec3 light0 = Lrgb[0] * (material * max(0., dot(normal, Ldir[0])) + specular0);
-      // light1 = Lrgb[1] * (material * max(0., dot(normal, Ldir[1])) + specular1);
-      color = ambient + light0;// + light1;
-    
+        vec3 light0 = Lrgb[0] * (material * max(0., dot(normal, Ldir[0])) + specular0);
+        // light1 = Lrgb[1] * (material * max(0., dot(normal, Ldir[1])) + specular1);
+        color = ambient + light0;// + light1;
+      }
+
       return color;
    }
 
@@ -153,46 +171,13 @@ Assignment 3
 
       t[0] = raySphere(V, W, sphere[0]);
       t[1] = raySphere(V, W, sphere[1]);
-      t[2] = raySphere(V, W, sphere[2]);
-
-
-      // Check if pixel is in shadow.
-      vec3 s0_sV = (V + t[0] * W) + .01;            // surface point on sphere[0].
-      vec3 s0_l0_sW = Ldir[0];                      // direction to light 0 from sphere[0].
-      float s0_l0_tToSphere[3];                     // t values from sphere[0] to every other sphere towards light 0 direction.
-
-      vec3 s1_sV = (V + t[1] * W) + .01;        
-      vec3 s1_l0_sW = Ldir[0];                     
-      float s1_l0_tToSphere[3];      
+      t[2] = raySphere(V, W, sphere[2]);           
     
-      vec3 s2_sV = (V + t[2] * W) + 0.1;
-      vec3 s2_l0_sW = Ldir[0];
-      float s2_l0_tToSphere[3];               
-     
-
-      // s0_l0_tToSphere[1] stores t value to sphere 1 from sphere 0 for light 0.
-      s0_l0_tToSphere[1] = raySphere(s0_sV, s0_l0_sW, sphere[1]);
-      s0_l0_tToSphere[2] = raySphere(s0_sV, s0_l0_sW, sphere[2]);
-      s1_l0_tToSphere[0] = raySphere(s1_sV, s1_l0_sW, sphere[0]);
-      s1_l0_tToSphere[2] = raySphere(s1_sV, s1_l0_sW, sphere[2]);
-      s2_l0_tToSphere[0] = raySphere(s2_sV, s2_l0_sW, sphere[0]);
-      s2_l0_tToSphere[1] = raySphere(s2_sV, s2_l0_sW, sphere[1]);
-
-      
       
       // Draw the back sphere
       if (t[1] < 10000. && t[1] < t[0] && t[1] < t[2]) {
-         color = shadeSphere(V + t[1] * W, sphere[1], material[1], W);
+         color = shadeSphere(V + t[1] * W, sphere[1], material[1], W, 1);
       }
-
-      /*
-      if (t[0] < 10000. && t[0] < t[1] && t[0] < t[2]) {
-        color = shadeSphere(V + t[0] * W, sphere[0], material[0], W);
-      }
-      if (t[2] < 10000. && t[2] < t[0] && t[2] < t[1]) {
-         color = shadeSphere(V + t[2] * W, sphere[2], material[2], W);
-      }
-      */
 
 
       // Intersection
@@ -202,33 +187,13 @@ Assignment 3
 
       if (intersection.x > intersection.y) {
         if (t[0] < t[2]) {
-          color = shadeSphere(V + t[0] * W, sphere[0], material[0], W);
+          color = shadeSphere(V + t[0] * W, sphere[0], material[0], W, 0);
         }
         else {
-          color = shadeSphere(V + t[2] * W, sphere[2], material[2], W);
+          color = shadeSphere(V + t[2] * W, sphere[2], material[2], W, 2);
         }
       }
-      
-      
-      // Draw shadows
-      if (s0_l0_tToSphere[1] < 10000. && t[0] < t[1] && t[0] < t[2]) {
-        color = shadeShadow(V + t[0] * W, sphere[0], material[0]);
-      }
-      if (s0_l0_tToSphere[2] < 10000. && t[0] < t[1] && t[0] < t[2]) {
-        color = shadeShadow(V + t[0] * W, sphere[0], material[0]);
-      }
-      if (s1_l0_tToSphere[0] < 10000. && t[1] < t[0] && t[1] < t[2]) {
-        color = shadeShadow(V + t[1] * W, sphere[1], material[1]);
-      }
-      if (s1_l0_tToSphere[2] < 10000. && t[1] < t[0] && t[1] < t[2]) {
-        color = shadeShadow(V + t[1] * W, sphere[1], material[1]);
-      }
-      if (s2_l0_tToSphere[0] < 10000. && t[2] < t[0] && t[2] < t[1]) {
-        color = shadeShadow(V + t[2] * W, sphere[2], material[2]);
-      }
-      if (s2_l0_tToSphere[1] < 10000. && t[2] < t[0] && t[2] < t[1]) {
-        color = shadeShadow(V + t[2] * W, sphere[2], material[2]);
-      }
+
 
       gl_FragColor = vec4(sqrt(color), 1.); // Do Gamma correction.
    }
