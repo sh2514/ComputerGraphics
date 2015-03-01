@@ -139,11 +139,11 @@ Assignment 3
 
       // Check if pixel is in shadow.
       vec3 s0_sV = (V + t[0] * W) + .01;            // surface point on sphere[0].
-      vec3 s0_l0_sW = -1 * Ldir[0];                      // direction to light 0 from sphere[0].
+      vec3 s0_l0_sW = -1. * Ldir[0];                      // direction to light 0 from sphere[0].
       float s0_l0_tToSphere[3];                     // t values from sphere[0] to every other sphere towards light 0 direction.
 
       vec3 s1_sV = (V + t[1] * W) + .01;        
-      vec3 s1_l0_sW = -1 * Ldir[0];                     
+      vec3 s1_l0_sW = -1. * Ldir[0];                     
       float s1_l0_tToSphere[3];                     
      
 
