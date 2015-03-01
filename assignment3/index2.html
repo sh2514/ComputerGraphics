@@ -81,7 +81,6 @@ Assignment 3
          if (st < 10000.) {
            return true;
          }
-         
        }
      }
     return false;
@@ -101,8 +100,7 @@ Assignment 3
       // USE A SIMPLE APPROXIMATION SUCH AS: ambient = material / 5.;
       vec3 ambient = material / 5.;
       
-      bool inShadow = isInShadow(point + .01, Ldir[0], sNum);
-      if (inShadow) {
+      if (isInShadow(point + .01, Ldir[0], sNum)) {
         color = ambient;
       }
       else {
