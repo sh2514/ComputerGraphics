@@ -57,6 +57,23 @@ Assignment 3
       }
    }
 
+   vec2 raySphereRoots(vec3 V, vec3 W, vec4 S) {
+      float a = 1.;
+      float b = 2. * dot(W, (V - S.xyz));
+      float c = dot(V - S.xyz, V - S.xyz) - pow(S.w, 2.);
+
+      float d = sqrt(pow(b, 2.) - (4. * a * c));
+      if (d > 0.) {
+        float root1 = ((-b) - d) / (2. * a);
+        float root2 = ((-b) + d) / (2. * a);
+ 
+        return vec2(root1, root2);
+      }
+      else {
+        return vec2(10000., 10000.);
+      }
+   }
+
    // Diffusely shade a sphere.
    //    point is the x,y,z position of the surface point.
    //    sphere is the x,y,z,r definition of the sphere.
@@ -160,18 +177,39 @@ Assignment 3
       s1_l0_tToSphere[2] = raySphere(s1_sV, s1_l0_sW, sphere[2]);
       s2_l0_tToSphere[0] = raySphere(s2_sV, s2_l0_sW, sphere[0]);
       s2_l0_tToSphere[1] = raySphere(s2_sV, s2_l0_sW, sphere[1]);
+
       
-      // Draw the spheres
-      if (t[0] < 10000. && t[0] < t[1] && t[0] < t[2]) {
-         color = shadeSphere(V + t[0] * W, sphere[0], material[0], W);
-      }
+      
+      // Draw the back sphere
       if (t[1] < 10000. && t[1] < t[0] && t[1] < t[2]) {
          color = shadeSphere(V + t[1] * W, sphere[1], material[1], W);
+      }
+
+      /*
+      if (t[0] < 10000. && t[0] < t[1] && t[0] < t[2]) {
+        color = shadeSphere(V + t[0] * W, sphere[0], material[0], W);
       }
       if (t[2] < 10000. && t[2] < t[0] && t[2] < t[1]) {
          color = shadeSphere(V + t[2] * W, sphere[2], material[2], W);
       }
+      */
 
+
+      // Intersection
+      vec2 s0Roots = raySphereRoots(V, W, sphere[0]);
+      vec2 s2Roots = raySphereRoots(V, W, sphere[2]);
+      vec2 intersection = vec2(max(s0Roots.y, s2Roots.y), min(s0Roots.x, s2Roots.x));
+
+      if (intersection.x > intersection.y) {
+        if (t[0] < t[2]) {
+          color = shadeSphere(V + t[0] * W, sphere[0], material[0], W);
+        }
+        else {
+          color = shadeSphere(V + t[2] * W, sphere[2], material[2], W);
+        }
+      }
+      
+      
       // Draw shadows
       if (s0_l0_tToSphere[1] < 10000. && t[0] < t[1] && t[0] < t[2]) {
         color = shadeShadow(V + t[0] * W, sphere[0], material[0]);
