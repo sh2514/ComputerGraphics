@@ -124,17 +124,19 @@ Assignment 3
       }
 
       sphere[0] = vec4(x1, y1, -1.5, .5);
-      sphere[1] = vec4(0.25, 0.25, -2.75, .5);
+      sphere[1] = vec4(0.5, 0.75, -2.75, .5);
+      sphere[2] = vec4(.25, -.25, -1.5, .3);
       // YOU NEED TO SET r,g,b FOR material.
       material[0] = vec3(0.5, 0.6, 0.8);
       material[1] = vec3(0.3, 0.5, 0.4);
+      material[2] = vec3(0.3, 0.3, 0.4);
 
       vec3 color = vec3(0., 0., 0.);
       float t[3];
 
       t[0] = raySphere(V, W, sphere[0]);
       t[1] = raySphere(V, W, sphere[1]);
-
+      t[2] = raySphere(V, W, sphere[2]);
 
 
       // Check if pixel is in shadow.
@@ -144,26 +146,50 @@ Assignment 3
 
       vec3 s1_sV = (V + t[1] * W) + .01;        
       vec3 s1_l0_sW = Ldir[0];                     
-      float s1_l0_tToSphere[3];                     
+      float s1_l0_tToSphere[3];      
+    
+      vec3 s2_sV = (V + t[2] * W) + 0.1;
+      vec3 s2_l0_sW = Ldir[0];
+      float s2_l0_tToSphere[3];               
      
 
       // s0_l0_tToSphere[1] stores t value to sphere 1 from sphere 0 for light 0.
       s0_l0_tToSphere[1] = raySphere(s0_sV, s0_l0_sW, sphere[1]);
+      s0_l0_tToSphere[2] = raySphere(s0_sV, s0_l0_sW, sphere[2]);
       s1_l0_tToSphere[0] = raySphere(s1_sV, s1_l0_sW, sphere[0]);
+      s1_l0_tToSphere[2] = raySphere(s1_sV, s1_l0_sW, sphere[2]);
+      s2_l0_tToSphere[0] = raySphere(s2_sV, s2_l0_sW, sphere[0]);
+      s2_l0_tToSphere[1] = raySphere(s2_sV, s2_l0_sW, sphere[1]);
       
-
-      if (t[0] < 10000. && t[0] < t[1]) {
+      // Draw the spheres
+      if (t[0] < 10000. && t[0] < t[1] && t[0] < t[2]) {
          color = shadeSphere(V + t[0] * W, sphere[0], material[0], W);
       }
-      if (t[1] < 10000. && t[1] < t[0]) {
+      if (t[1] < 10000. && t[1] < t[0] && t[1] < t[2]) {
          color = shadeSphere(V + t[1] * W, sphere[1], material[1], W);
       }
+      if (t[2] < 10000. && t[2] < t[0] && t[2] < t[1]) {
+         color = shadeSphere(V + t[2] * W, sphere[2], material[2], W);
+      }
 
-      if (s0_l0_tToSphere[1] < 10000. && t[0] < t[1]) {
+      // Draw shadows
+      if (s0_l0_tToSphere[1] < 10000. && t[0] < t[1] && t[0] < t[2]) {
         color = shadeShadow(V + t[0] * W, sphere[0], material[0]);
       }
-      if (s1_l0_tToSphere[0] < 10000. && t[1] < t[0]) {
+      if (s0_l0_tToSphere[2] < 10000. && t[0] < t[1] && t[0] < t[2]) {
+        color = shadeShadow(V + t[0] * W, sphere[0], material[0]);
+      }
+      if (s1_l0_tToSphere[0] < 10000. && t[1] < t[0] && t[1] < t[2]) {
         color = shadeShadow(V + t[1] * W, sphere[1], material[1]);
+      }
+      if (s1_l0_tToSphere[2] < 10000. && t[1] < t[0] && t[1] < t[2]) {
+        color = shadeShadow(V + t[1] * W, sphere[1], material[1]);
+      }
+      if (s2_l0_tToSphere[0] < 10000. && t[2] < t[0] && t[2] < t[1]) {
+        color = shadeShadow(V + t[2] * W, sphere[2], material[2]);
+      }
+      if (s2_l0_tToSphere[1] < 10000. && t[2] < t[0] && t[2] < t[1]) {
+        color = shadeShadow(V + t[2] * W, sphere[2], material[2]);
       }
 
       gl_FragColor = vec4(sqrt(color), 1.); // Do Gamma correction.
