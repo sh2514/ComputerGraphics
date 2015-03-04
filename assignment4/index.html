@@ -2,9 +2,9 @@
 Shikuan Huang
 Professor Perlin
 Computer Graphics
-25 February, 2015
+4, March 2015
 
-Assignment 3
+Assignment 4 - Even more ray tracing
 -->
 
 <script src=lib1.js></script>
@@ -110,24 +110,6 @@ Assignment 3
       }
    }
 
-    float raySphereShade(vec3 V, vec3 W, vec4 S) {
-    // YOU NEED TO COMPUTE t, BY SETTING UP AND THEN SOLVING A QUADRATIC EQUATION.
-    float a = 1.;
-    float b = 2. * dot(W, (V - S.xyz));
-    float c = dot(V - S.xyz, V - S.xyz) - pow(S.w, 2.);
-
-    float d = sqrt(pow(b, 2.) - (4. * a * c));
-    if (d > 0.) {
-    float root1 = ((-b) - d) / (2. * a);
-    float root2 = ((-b) + d) / (2. * a);
-
-    return root1;
-    }
-    else {
-    return 10000.;
-    }
-    }
-
    vec2 raySphereRoots(vec3 V, vec3 W, vec4 S) {
       float a = 1.;
       float b = 2. * dot(W, (V - S.xyz));
@@ -193,16 +175,6 @@ Assignment 3
       return color;
    }
 
-   vec3 shadeShadow(vec3 point, vec4 sphere, vec3 material) {
-      vec3 color = vec3(0., 0., 0.);
-      
-      // We do not add in the diffuse and specular components of surface reflectance.
-      vec3 ambient = material / 5.;
-      color = ambient;
-
-      return color;
-   }
-
    float rayPlane(vec3 V, vec3 W, vec4 P) {
      float t = -(P.x * V.x + P.y * V.y + P.z * V.z + P.w) / (P.x * W.x + P.y * W.y + P.z * W.z);
      return t;
@@ -248,12 +220,10 @@ Assignment 3
       t[1] = raySphere(V, W, sphere[1]);
       t[2] = raySphere(V, W, sphere[2]);           
     
-      
       // Draw the back sphere
       if (t[1] < 10000. && t[1] < t[0] && t[1] < t[2]) {
          color = shadeSphere(V + t[1] * W, sphere[1], material[1], W, 1);
       }
-
 
       // Intersection
       vec2 s0Roots = raySphereRoots(V, W, sphere[0]);
@@ -268,6 +238,7 @@ Assignment 3
           color = shadeSphere(V + t[2] * W, sphere[2], material[2], W, 2);
         }
       }
+
     /*
     vec4 cube1[6];
     cube1[0] = vec4(1., 0., 0., 1.);    // x >= -1
@@ -283,6 +254,7 @@ Assignment 3
       //color = vec3(0., 3., 2.);
     }
     */
+
       gl_FragColor = vec4(sqrt(color), 1.); // Do Gamma correction.
    }
 </script>
