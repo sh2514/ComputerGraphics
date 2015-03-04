@@ -174,6 +174,65 @@ Assignment 4 - Even more ray tracing
       color += .2 * fractal(4. * normal);
       return color;
    }
+   /*
+   vec2 refractionRay(vec3 V, vec3 W) {
+      vec2 t = vec2(10000., 0);
+      float counter = 0.;
+      for (int i = 0; i < 3; i++) {
+         float currentT = raySphere(V, W, sphere[i]);
+         if (currentT < 10000.) {
+            t = vec2(currentT, i);
+         }
+         counter++;
+      }
+      return t;
+   }*/
+
+   vec3 shadeSphereRefraction(vec3 point, vec4 thisSphere, vec3 thisMaterial, vec3 rayDir, int sNum) {
+      vec3 color = vec3(0.,0.,0.);
+      vec3 ambient = thisMaterial / 5.;
+      vec3 normal = (point - thisSphere.xyz) / thisSphere.w;
+      vec3 R0 = 2. * normal * dot(normal, Ldir[0]) - Ldir[0];
+      //vec3 R1 = 2. * normal * dot(normal, Ldir[1]) - Ldir[1];
+      vec3 SRrgb = thisMaterial;
+
+      vec3 refractionColor = vec3(0., 0., 0.);
+      vec3 RFV1 = point - .01;
+      vec3 RFW1 = vec3(rayDir * 1.5);
+      vec2 RFt1 = raySphereRoots(RFV1, RFW1, thisSphere);
+
+      vec3 RFV2 = (RFV1 + RFt1.y * RFW1) - .01;
+      vec3 RFW2 = vec3(rayDir / 1.5);
+      //float RFt2 = raySphere(RFV2, RFW2, sphere[1]);
+      //vec2 RFt2 = refractionRay(RFV2, RFW2);
+      
+      float RFt2;
+      for (int i = 0; i < 3; i++) {
+        RFt2 = raySphere(RFV2, RFW2, sphere[i]);
+        if (RFt2 < 10000.) {
+          refractionColor = shadeSphere(RFV2 + RFt2 * RFW2, sphere[i], material[i], RFW2, sNum);
+        }
+      }
+      
+      
+      if (isInShadow(point + .01, Ldir[0], sNum)) {
+        color = ambient;
+      }
+      else {
+        vec3 E = -rayDir;
+        float power = 7. * noise(20. * normal * vec3(1., 1., 1.));
+        vec3 specular0 = SRrgb * pow(max(0., dot(E, R0)), 10. + power);
+        //vec3 specular1 = SRrgb * pow(max(0., dot(E, R1)), 40.);
+    
+        vec3 light0 = Lrgb[0] * (thisMaterial * max(0., dot(normal, Ldir[0])) + specular0);
+        // light1 = Lrgb[1] * (thisMaterial * max(0., dot(normal, Ldir[1])) + specular1);
+        color = ambient + light0;// + light1;
+        color += refractionColor;
+      }
+      //color += refractionColor;
+      color += .2 * fractal(4. * normal);
+      return color;
+   }
 
    float rayPlane(vec3 V, vec3 W, vec4 P) {
      float t = -(P.x * V.x + P.y * V.y + P.z * V.z + P.w) / (P.x * W.x + P.y * W.y + P.z * W.z);
@@ -205,9 +264,9 @@ Assignment 4 - Even more ray tracing
         y1 = -uCursor.y;
       }
 
-      sphere[0] = vec4(-.25 + x1, -.25 + y1, -1.5 - x1, .5);
-      sphere[1] = vec4(0.5 + x1, 0.75 + y1, -2.75, .5);
-      sphere[2] = vec4(.25 + x1, -.25 + y1, -1.5, .3);
+      sphere[0] = vec4(.25 + x1, .25 + y1, -1.5 + x1, .5);
+      sphere[1] = vec4(0.5 - sin(uTime), 0.75, -2.75, .5 - cos(uTime) / 2.);
+      sphere[2] = vec4(.25, -.25, -1.5, .3);
       // YOU NEED TO SET r,g,b FOR material.
       material[0] = vec3(0.5, 0.6, 0.8);
       material[1] = vec3(0.3, 0.5, 0.4);
@@ -222,7 +281,7 @@ Assignment 4 - Even more ray tracing
     
       // Draw the back sphere
       if (t[1] < 10000. && t[1] < t[0] && t[1] < t[2]) {
-         color = shadeSphere(V + t[1] * W, sphere[1], material[1], W, 1);
+         color = shadeSphereRefraction(V + t[1] * W, sphere[1], material[1], W, 1);
       }
 
       // Intersection
@@ -232,10 +291,10 @@ Assignment 4 - Even more ray tracing
 
       if (intersection.x > intersection.y) {
         if (t[0] < t[2]) {
-          color = shadeSphere(V + t[0] * W, sphere[0], material[0], W, 0);
+          color = shadeSphereRefraction(V + t[0] * W, sphere[0], material[0], W, 0);
         }
         else {
-          color = shadeSphere(V + t[2] * W, sphere[2], material[2], W, 2);
+          color = shadeSphereRefraction(V + t[2] * W, sphere[2], material[2], W, 2);
         }
       }
 
