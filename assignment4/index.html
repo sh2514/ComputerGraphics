@@ -131,7 +131,7 @@ Assignment 4 - Even more ray tracing
      for (int i = 0; i < 3; i++) {
        if (!(i == sNum)) {
          float st = raySphere(point, lightDir, sphere[i]);
-         if (st < 10000.) {
+         if (st < 10000. && st > 0.) {
            return true;
          }
        }
