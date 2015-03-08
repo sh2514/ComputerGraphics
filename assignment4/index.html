@@ -290,10 +290,10 @@ Assignment 4 - Even more ray tracing
       vec2 intersection = vec2(max(s0Roots.y, s2Roots.y), min(s0Roots.x, s2Roots.x));
 
       if (intersection.x > intersection.y) {
-        if (t[0] < t[2]) {
+        if (t[0] < t[2] && t[0] < t[1]) {
           color = shadeSphereRefraction(V + t[0] * W, sphere[0], material[0], W, 0);
         }
-        else {
+        else if (t[2] <= t[0] && t[2] < t[1]) {
           color = shadeSphereRefraction(V + t[2] * W, sphere[2], material[2], W, 2);
         }
       }
