@@ -210,7 +210,7 @@ Assignment 4 - Even more ray tracing
       for (int i = 0; i < 3; i++) {
         RFt2 = raySphere(RFV2, RFW2, sphere[i]);
         if (RFt2 < 10000.) {
-          refractionColor = shadeSphere(RFV2 + RFt2 * RFW2, sphere[i], material[i], RFW2, sNum);
+          refractionColor = shadeSphere(RFV2 + RFt2 * RFW2, sphere[i], material[i], RFW2, sNum) + .3 * fractal(4. * normal);
         }
       }
       
