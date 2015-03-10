@@ -22,6 +22,7 @@ function drawDrawings() {
     drawOnCanvas4();
     drawOnCanvas5();
     drawOnCanvas6();
+    drawOnCanvas7();
 }
 
 function drawOnCanvas1() {
@@ -116,7 +117,19 @@ function drawOnCanvas6() {
         for (var i = 0; i < cube1V.length; i++) {
             tcube1V[i] = cube1V[i].slice(0);
         }
-        tcube1V = performTransformation(tcube1V, 4, time);
+        tcube1V = performTransformation(tcube1V, 4, Math.tan(time));
+        drawCube(g, tcube1V, cube1E, 100, 100, 200, 200, 250);
+    }
+}
+
+function drawOnCanvas7() {
+    var canvas3 = initCanvas('canvas7');
+    canvas3.update = function (g) {
+        var tcube1V = cube1V.slice(0);
+        for (var i = 0; i < cube1V.length; i++) {
+            tcube1V[i] = cube1V[i].slice(0);
+        }
+        //tcube1V = performTransformation(tcube1V, 4, Math.tan(time));
         drawCube(g, tcube1V, cube1E, 100, 100, 200, 200, 250);
     }
 }
@@ -137,15 +150,13 @@ function performTransformation(argV, option, argT) {
                 argV[i] = rotateZ(argV[i], argT);
                 break;
             case 4:
+                argV[i] = scale(argV[i], argT, argT, argT);
                 argV[i] = rotateX(argV[i], argT);
                 argV[i] = rotateY(argV[i], argT);
                 argV[i] = rotateZ(argV[i], argT);
                 break;
             case 5:
-
-                break;
-            case 6:
-
+                
                 break;
             default:
                 console.log('ERROR in performTransformation');
@@ -211,12 +222,15 @@ function rotateZ(v, theta) {
 }
 
 function scale(v, x, y, z) {
-
+    var i = identity();
+    i[0][0] = x;
+    i[1][1] = y;
+    i[2][2] = z;
+    return dot(i, v);
 }
 
-// arguments are vectors
-function transform(v, src, dst) {
-
+function transform(src, width, height) {
+    return [(width / 2) + src[0] * (width) / 2, (height / 2) - src[1] * (width) / 2];
 }
 
 function drawCube(g, V, E, xOffset, yOffset, width, height, sideLength) {
@@ -226,22 +240,12 @@ function drawCube(g, V, E, xOffset, yOffset, width, height, sideLength) {
     g.strokeStyle = 'black';
     g.beginPath();
     for (var i = 0; i < E.length; i++) {
-        var fromX = xOffset + xModelToPixel(V[E[i][0]][0], width, width);
-        var fromY = yOffset + yModelToPixel(V[E[i][0]][1], height, width);
-        var toX = xOffset + xModelToPixel(V[E[i][1]][0], width, width);
-        var toY = yOffset + yModelToPixel(V[E[i][1]][1], height, width);
-        g.moveTo(fromX, fromY);
-        g.lineTo(toX, toY);
+        var from = transform([V[E[i][0]][0], V[E[i][0]][1]], width, height);
+        var to = transform([V[E[i][1]][0], V[E[i][1]][1]], width, height);
+        g.moveTo(from[0] + xOffset, from[1] + yOffset);
+        g.lineTo(to[0] + xOffset, to[1] + yOffset);
     }
     g.stroke();
-}
-
-function xModelToPixel(x, width, width) {
-    return (width / 2) + x * (width) / 2;
-}
-
-function yModelToPixel(y, height, width) {
-    return (height / 2) - y * (width) / 2;
 }
 
 function drawSquare(g, x, y) {

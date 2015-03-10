@@ -39,20 +39,3 @@
       setTimeout(tick, 1000 / 60);
    }
    tick();
-
-
-   var Vector4 = function (x, y, z, w) {
-       this.x = x;
-       this.y = y;
-       this.z = z;
-       this.w = w;
-       //this.set(x, y, z, w);
-   }
-   Vector4.prototype = {
-       set: function (x, y, z, w) {
-           if (x !== undefined) this.x = x;
-           if (y !== undefined) this.y = y;
-           if (z !== undefined) this.z = z;
-           if (w !== undefined) this.w = w;
-       },
-   }
