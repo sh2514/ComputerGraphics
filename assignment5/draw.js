@@ -25,6 +25,9 @@ function drawDrawings() {
     drawOnCanvas7();
 }
 
+/* ==================================================
+Clock
+================================================== */
 function drawOnCanvas1() {
     var canvas1 = initCanvas('canvas1');
     canvas1.update = function (g) {
@@ -34,7 +37,9 @@ function drawOnCanvas1() {
     }
 }
 
-/* Cube1 */
+/* ==================================================
+Cube1
+================================================== */
 var cube1V = [
     [-1, -1, -1, 1],
     [1, -1, -1, 1],
@@ -59,12 +64,119 @@ var cube1E = [
     [4, 5],
     [4, 6],
     [5, 7],
-    [6, 7] ];
+    [6, 7]];
 
+/* ==================================================
+Train
+================================================== */
+var train1V = [
+    // Car 1
+    [.55, 0, -.15, 1],
+    [.85, 0, -.15, 1],
+    [.55, .35, -.15, 1],
+    [.85, .25, -.15, 1],
+    [.55, 0, .15, 1],
+    [.85, 0, .15, 1],
+    [.55, .35, .15, 1],
+    [.85, .25, .15, 1],
+
+
+    // Car 2
+    [-.05, 0, -.20, 1],
+    [.5, 0, -.20, 1],
+    [-.05, .45, -.20, 1],
+    [.5, .45, -.20, 1],
+    [-.05, 0, .20, 1],
+    [.5, 0, .20, 1],
+    [-.05, .45, .20, 1],
+    [.5, .45, .20, 1],
+
+    // Car 3
+    [-.75, 0, -.20, 1],
+    [-.1, 0, -.20, 1],
+    [-.75, .45, -.20, 1],
+    [-.1, .45, -.20, 1],
+    [-.75, 0, .20, 1],
+    [-.1, 0, .20, 1],
+    [-.75, .45, .20, 1],
+    [-.1, .45, .20, 1],
+
+    // Connect 1
+    [.5, 0, -.05, 1],
+    [.55, 0, -.05, 1],
+    [.5, 0, .05, 1],
+    [.55, 0, .05, 1],
+
+    // Connect 2
+    [-.1, 0, -.05, 1],
+    [-.05, 0, -.05, 1],
+    [-.1, 0, .05, 1],
+    [-.05, 0, .05, 1]
+]
+
+var train1E = [
+    // Car 1
+    [0, 1],
+    [0, 2],
+    [1, 3],
+    [2, 3],
+    [0, 4],
+    [1, 5],
+    [2, 6],
+    [3, 7],
+    [4, 5],
+    [4, 6],
+    [5, 7],
+    [6, 7],
+
+    // Car 2
+    [8, 9],
+    [8, 10],
+    [9, 11],
+    [10, 11],
+    [8, 12],
+    [9, 13],
+    [10, 14],
+    [11, 15],
+    [12, 13],
+    [12, 14],
+    [13, 15],
+    [14, 15],
+
+    // Car 3
+    [16, 17],
+    [16, 18],
+    [17, 19],
+    [18, 19],
+    [16, 20],
+    [17, 21],
+    [18, 22],
+    [19, 23],
+    [20, 21],
+    [20, 22],
+    [21, 23],
+    [22, 23],
+
+    // Connect 1
+    [24, 25],
+    [24, 26],
+    [25, 27],
+    [26, 27],
+
+    // Connect 2
+    [28, 29],
+    [28, 30],
+    [29, 31],
+    [30, 31],
+    ];
+
+
+/* ==================================================
+Translation
+================================================== */
 function drawOnCanvas2() {
     var canvas2 = initCanvas('canvas2');
     canvas2.update = function (g) {
-        //drawExample(g, this.cursor.x, this.cursor.y, this.cursor.z);
         var tcube1V = cube1V.slice(0);
         for (var i = 0; i < cube1V.length; i++) {
             tcube1V[i] = cube1V[i].slice(0);
@@ -74,6 +186,9 @@ function drawOnCanvas2() {
     }
 }
 
+/* ==================================================
+Rotate about x-axis
+================================================== */
 function drawOnCanvas3() {
     var canvas3 = initCanvas('canvas3');
     canvas3.update = function (g) {
@@ -86,6 +201,9 @@ function drawOnCanvas3() {
     }
 }
 
+/* ==================================================
+Rotate about y-axis
+================================================== */
 function drawOnCanvas4() {
     var canvas3 = initCanvas('canvas4');
     canvas3.update = function (g) {
@@ -98,6 +216,9 @@ function drawOnCanvas4() {
     }
 }
 
+/* ==================================================
+Rotate about z-axis
+================================================== */
 function drawOnCanvas5() {
     var canvas3 = initCanvas('canvas5');
     canvas3.update = function (g) {
@@ -110,6 +231,9 @@ function drawOnCanvas5() {
     }
 }
 
+/* ==================================================
+Scale and rotate about all three axes.
+================================================== */
 function drawOnCanvas6() {
     var canvas3 = initCanvas('canvas6');
     canvas3.update = function (g) {
@@ -122,15 +246,18 @@ function drawOnCanvas6() {
     }
 }
 
+/* ==================================================
+Draw train
+================================================== */
 function drawOnCanvas7() {
     var canvas3 = initCanvas('canvas7');
     canvas3.update = function (g) {
-        var tcube1V = cube1V.slice(0);
-        for (var i = 0; i < cube1V.length; i++) {
-            tcube1V[i] = cube1V[i].slice(0);
+        var tTrain1V = train1V.slice(0);
+        for (var i = 0; i < train1V.length; i++) {
+            tTrain1V[i] = train1V[i].slice(0);
         }
-        //tcube1V = performTransformation(tcube1V, 4, Math.tan(time));
-        drawCube(g, tcube1V, cube1E, 100, 100, 200, 200, 250);
+        tTrain1V = performTransformation(tTrain1V, 5, time);
+        drawTrain(g, tTrain1V, train1E, 500, 500);
     }
 }
 
@@ -156,13 +283,14 @@ function performTransformation(argV, option, argT) {
                 argV[i] = rotateZ(argV[i], argT);
                 break;
             case 5:
-                
+                argV[i] = rotateY(argV[i], argT);
+                argV[i] = rotateZ(argV[i], 0);
+                argV[i] = rotateX(argV[i], Math.PI / 9);
                 break;
             default:
                 console.log('ERROR in performTransformation');
                 break;
         }
-        
     }
     return argV;
 }
@@ -244,6 +372,22 @@ function drawCube(g, V, E, xOffset, yOffset, width, height, sideLength) {
         var to = transform([V[E[i][1]][0], V[E[i][1]][1]], width, height);
         g.moveTo(from[0] + xOffset, from[1] + yOffset);
         g.lineTo(to[0] + xOffset, to[1] + yOffset);
+    }
+    g.stroke();
+}
+
+function drawTrain(g, V, E, width, height)
+{
+    if (E.length === 0) {
+        return;
+    }
+    g.strokeStyle = 'black';
+    g.beginPath();
+    for (var i = 0; i < E.length; i++) {
+        var from = transform([V[E[i][0]][0], V[E[i][0]][1]], width, height);
+        var to = transform([V[E[i][1]][0], V[E[i][1]][1]], width, height);
+        g.moveTo(from[0], from[1]);
+        g.lineTo(to[0], to[1]);
     }
     g.stroke();
 }
