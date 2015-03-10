@@ -23,6 +23,7 @@ function drawDrawings() {
     drawOnCanvas5();
     drawOnCanvas6();
     drawOnCanvas7();
+    drawOnCanvas8();
 }
 
 /* ==================================================
@@ -111,7 +112,53 @@ var train1V = [
     [-.1, 0, -.05, 1],
     [-.05, 0, -.05, 1],
     [-.1, 0, .05, 1],
-    [-.05, 0, .05, 1]
+    [-.05, 0, .05, 1],
+
+    // Car 1 Door
+    [.6, .01, .15, 1],
+    [.7, .01, .15, 1],
+    [.6, .2, .15, 1],
+    [.7, .2, .15, 1],
+
+    // Car 2 Door
+    [.35, .01, .20, 1],
+    [.45, .01, .20, 1],
+    [.35, .2, .20, 1],
+    [.45, .2, .20, 1],
+
+    // Car 3 Door
+    [-.25, .01, .20, 1],
+    [-.15, .01, .20, 1],
+    [-.25, .2, .20, 1],
+    [-.15, .2, .20, 1],
+
+    // Car 1 Window
+    [.85, .1, -.12, 1],
+    [.85, .2, -.12, 1],
+    [.85, .1, .12, 1],
+    [.85, .2, .12, 1],
+
+    // Car 2 Windows
+    [0, .1, -.20, 1],
+    [.3, .1, -.20, 1],
+    [0, .2, -.20, 1],
+    [.3, .2, -.20, 1],
+
+    [0, .1, .20, 1],
+    [.3, .1, .20, 1],
+    [0, .2, .20, 1],
+    [.3, .2, .20, 1],
+
+    // Car 3 Back Doors
+    [-.75, .01, -.17, 1],
+    [-.75, .4, -.17, 1],
+    [-.75, .01, 0, 1],
+    [-.75, .4, 0, 1],
+
+    [-.75, .01, .17, 1],
+    [-.75, .4, .17, 1],
+    [-.75, .01, 0, 1],
+    [-.75, .4, 0, 1],
 ]
 
 var train1E = [
@@ -168,6 +215,53 @@ var train1E = [
     [28, 30],
     [29, 31],
     [30, 31],
+    
+    // Car 1 Door
+    [32, 33],
+    [32, 34],
+    [34, 35],
+    [35, 33],
+
+    // Car 2 Door
+    [36, 37],
+    [36, 38],
+    [38, 39],
+    [39, 37],
+
+    // Car 3 Doors
+    [40, 41],
+    [40, 42],
+    [42, 43],
+    [43, 41],
+
+    // Car 1 Window
+    [44, 45],
+    [44, 46],
+    [46, 47],
+    [47, 45],
+
+    // Car 2 Windows
+    [48, 49],
+    [48, 50],
+    [50, 51],
+    [51, 49],
+
+    [52, 53],
+    [52, 54],
+    [54, 55],
+    [55, 53],
+
+    // Car 3 Back Doors
+    [56, 57],
+    [56, 58],
+    [58, 59],
+    [59, 57],
+
+    [60, 61],
+    [60, 62],
+    [62, 63],
+    [63, 61],
+
     ];
 
 
@@ -181,7 +275,13 @@ function drawOnCanvas2() {
         for (var i = 0; i < cube1V.length; i++) {
             tcube1V[i] = cube1V[i].slice(0);
         }
-        tcube1V = performTransformation(tcube1V, 0, Math.sin(time));
+        if (this.cursor.z) {
+            tcube1V = performTransformation(tcube1V, 0, (this.cursor.x - (canvas2.width / 2)) / (canvas2.width / 4), -(this.cursor.y - (canvas2.width / 2)) / (canvas2.width / 4), 1);
+        }
+        else {
+            tcube1V = performTransformation(tcube1V, 0, Math.sin(time), Math.sin(time), Math.sin(time));
+        }
+        
         drawCube(g, tcube1V, cube1E, 100, 100, 200, 200, 250);
     }
 }
@@ -196,7 +296,12 @@ function drawOnCanvas3() {
         for (var i = 0; i < cube1V.length; i++) {
             tcube1V[i] = cube1V[i].slice(0);
         }
-        tcube1V = performTransformation(tcube1V, 1, time);
+        if (this.cursor.z) {
+            tcube1V = performTransformation(tcube1V, 1, this.cursor.y / 100);
+        }
+        else {
+            tcube1V = performTransformation(tcube1V, 1, time);
+        }
         drawCube(g, tcube1V, cube1E, 100, 100, 200, 200, 250);
     }
 }
@@ -205,13 +310,18 @@ function drawOnCanvas3() {
 Rotate about y-axis
 ================================================== */
 function drawOnCanvas4() {
-    var canvas3 = initCanvas('canvas4');
-    canvas3.update = function (g) {
+    var canvas4 = initCanvas('canvas4');
+    canvas4.update = function (g) {
         var tcube1V = cube1V.slice(0);
         for (var i = 0; i < cube1V.length; i++) {
             tcube1V[i] = cube1V[i].slice(0);
         }
-        tcube1V = performTransformation(tcube1V, 2, time);
+        if (this.cursor.z) {
+            tcube1V = performTransformation(tcube1V, 2, this.cursor.x / 100);
+        }
+        else {
+            tcube1V = performTransformation(tcube1V, 2, time);
+        }
         drawCube(g, tcube1V, cube1E, 100, 100, 200, 200, 250);
     }
 }
@@ -220,13 +330,18 @@ function drawOnCanvas4() {
 Rotate about z-axis
 ================================================== */
 function drawOnCanvas5() {
-    var canvas3 = initCanvas('canvas5');
-    canvas3.update = function (g) {
+    var canvas5 = initCanvas('canvas5');
+    canvas5.update = function (g) {
         var tcube1V = cube1V.slice(0);
         for (var i = 0; i < cube1V.length; i++) {
             tcube1V[i] = cube1V[i].slice(0);
         }
-        tcube1V = performTransformation(tcube1V, 3, time);
+        if (this.cursor.z) {
+            tcube1V = performTransformation(tcube1V, 3, -this.cursor.x / 100);
+        }
+        else {
+            tcube1V = performTransformation(tcube1V, 3, time);
+        }
         drawCube(g, tcube1V, cube1E, 100, 100, 200, 200, 250);
     }
 }
@@ -235,13 +350,18 @@ function drawOnCanvas5() {
 Scale and rotate about all three axes.
 ================================================== */
 function drawOnCanvas6() {
-    var canvas3 = initCanvas('canvas6');
-    canvas3.update = function (g) {
+    var canvas6 = initCanvas('canvas6');
+    canvas6.update = function (g) {
         var tcube1V = cube1V.slice(0);
         for (var i = 0; i < cube1V.length; i++) {
             tcube1V[i] = cube1V[i].slice(0);
         }
-        tcube1V = performTransformation(tcube1V, 4, Math.tan(time));
+        if (this.cursor.z) {
+            tcube1V = performTransformation(tcube1V, 4, this.cursor.y / 100, this.cursor.x / 100, -this.cursor.x / 100, 1);
+        }
+        else {
+            tcube1V = performTransformation(tcube1V, 4, Math.tan(time), Math.tan(time), Math.tan(time), Math.tan(time));
+        }
         drawCube(g, tcube1V, cube1E, 100, 100, 200, 200, 250);
     }
 }
@@ -250,42 +370,114 @@ function drawOnCanvas6() {
 Draw train
 ================================================== */
 function drawOnCanvas7() {
-    var canvas3 = initCanvas('canvas7');
-    canvas3.update = function (g) {
+    var canvas7 = initCanvas('canvas7');
+    canvas7.update = function (g) {
         var tTrain1V = train1V.slice(0);
         for (var i = 0; i < train1V.length; i++) {
             tTrain1V[i] = train1V[i].slice(0);
         }
-        tTrain1V = performTransformation(tTrain1V, 5, time);
+        if (this.cursor.z) {
+            tTrain1V = performTransformation(tTrain1V, 5, -this.cursor.x / 100, 0, this.cursor.y / 100 - 2);
+        }
+        else {
+            tTrain1V = performTransformation(tTrain1V, 5, time, 0, Math.PI / 9);
+        }
         drawTrain(g, tTrain1V, train1E, 500, 500);
     }
 }
 
-function performTransformation(argV, option, argT) {
+/* ==================================================
+Train random
+================================================== */
+function drawOnCanvas8() {
+    var canvas8 = initCanvas('canvas8');
+    canvas8.update = function (g) {
+        var tTrain1V = train1V.slice(0);
+        for (var i = 0; i < train1V.length; i++) {
+            tTrain1V[i] = train1V[i].slice(0);
+        }
+        if (this.cursor.z) {
+            tTrain1V = special(tTrain1V, 36, -this.cursor.x / 80, Math.sin(time), this.cursor.y / 80 - 2);
+        }
+        else {
+                tTrain1V = performTransformation(tTrain1V, 5, time, 0, Math.PI / 9);
+        }
+        drawTrain2(g, tTrain1V, train1E, 500, 500, time);
+    }
+}
+
+function special(argV, stop, arg1, arg2, arg3, arg4) {
+    for (var i = 0; i < 8; i++) {
+        argV[i] = rotateZ(argV[i], arg1);
+        argV[i] = rotateY(argV[i], arg3);
+        argV[i] = rotateY(argV[i], arg2);
+    }
+
+    for (var i = 8; i < 16; i++) {
+        argV[i] = rotateX(argV[i], arg1);
+        argV[i] = rotateY(argV[i], arg3);
+        argV[i] = rotateY(argV[i], arg2);
+    }
+
+    for (var i = 16; i < 24; i++) {
+        argV[i] = rotateX(argV[i], arg3);
+        argV[i] = rotateY(argV[i], arg1);
+        argV[i] = rotateY(argV[i], arg2);
+    }
+
+    for (var i = 24; i < 32; i++) {
+        argV[i] = rotateX(argV[i], arg1);
+        argV[i] = rotateY(argV[i], arg3);
+        argV[i] = rotateY(argV[i], arg2);
+    }
+
+    for (var i = 32; i < 48; i++) {
+        argV[i] = rotateX(argV[i], arg3);
+        argV[i] = rotateY(argV[i], arg1);
+        argV[i] = rotateY(argV[i], arg2);
+    }
+    
+    for (var i = 48; i < argV.length; i++) {
+        argV[i] = rotateY(argV[i], arg3);
+        argV[i] = rotateX(argV[i], arg1);
+        argV[i] = rotateY(argV[i], arg2);
+    }
+    return argV;
+}
+
+/* ==================================================
+Perform transformation indicated by "option"
+================================================== */
+function performTransformation(argV, option, arg1, arg2, arg3, arg4) {
     for (var i = 0; i < argV.length; i++) {
         switch (option) {
             case 0:
-                argV[i] = translate(argV[i], argT, argT, argT);
+                argV[i] = translate(argV[i], arg1, arg2, arg3);
                 break;
             case 1:
-                argV[i] = rotateX(argV[i], argT);
+                argV[i] = rotateX(argV[i], arg1);
                 break;
             case 2:
-                argV[i] = rotateY(argV[i], argT);
+                argV[i] = rotateY(argV[i], arg1);
                 break;
             case 3:
-                argV[i] = rotateZ(argV[i], argT);
+                argV[i] = rotateZ(argV[i], arg1);
                 break;
             case 4:
-                argV[i] = scale(argV[i], argT, argT, argT);
-                argV[i] = rotateX(argV[i], argT);
-                argV[i] = rotateY(argV[i], argT);
-                argV[i] = rotateZ(argV[i], argT);
+                argV[i] = scale(argV[i], arg4, arg4, arg4);
+                argV[i] = rotateX(argV[i], arg1);
+                argV[i] = rotateY(argV[i], arg2);
+                argV[i] = rotateZ(argV[i], arg3);
                 break;
             case 5:
-                argV[i] = rotateY(argV[i], argT);
-                argV[i] = rotateZ(argV[i], 0);
-                argV[i] = rotateX(argV[i], Math.PI / 9);
+                argV[i] = rotateY(argV[i], arg1);
+                argV[i] = rotateZ(argV[i], arg2);
+                argV[i] = rotateX(argV[i], arg3);
+                break;
+            case 6:
+                argV[i] = rotateY(argV[i], arg1);
+                argV[i] = rotateZ(argV[i], arg2);
+                argV[i] = rotateX(argV[i], arg3);
                 break;
             default:
                 console.log('ERROR in performTransformation');
@@ -381,15 +573,161 @@ function drawTrain(g, V, E, width, height)
     if (E.length === 0) {
         return;
     }
-    g.strokeStyle = 'black';
+    g.strokeStyle = 'snow';
     g.beginPath();
-    for (var i = 0; i < E.length; i++) {
+    for (var i = 0; i < 44; i++) {
         var from = transform([V[E[i][0]][0], V[E[i][0]][1]], width, height);
         var to = transform([V[E[i][1]][0], V[E[i][1]][1]], width, height);
+
         g.moveTo(from[0], from[1]);
         g.lineTo(to[0], to[1]);
     }
     g.stroke();
+    
+    g.beginPath();
+    g.strokeStyle = 'black';
+    for (var i = 44; i < E.length; i++) {
+        var from = transform([V[E[i][0]][0], V[E[i][0]][1]], width, height);
+        var to = transform([V[E[i][1]][0], V[E[i][1]][1]], width, height);
+
+        g.moveTo(from[0], from[1]);
+        g.lineTo(to[0], to[1]);
+    }
+    g.stroke();
+}
+
+function getColorString(r, g, b) {
+    return "rgb(" + r + "," + g + "," + b + ")";
+}
+
+function drawTrain2(g, V, E, width, height, time) {
+    if (E.length === 0) {
+        return;
+    }
+    var red = (time + 15 * 3) % 255;
+    var green = (time + 35 * 3) % 255;
+    var blue = (time + 25 * 3) % 255;
+    g.strokeStyle = getColorString(red, green, blue);
+    g.beginPath();
+    for (var i = 0; i < E.length; i++) {
+        var from = transform([V[E[i][0]][0], V[E[i][0]][1]], width, height);
+        var to = transform([V[E[i][1]][0], V[E[i][1]][1]], width, height);
+
+        g.moveTo(from[0], from[1]);
+        g.lineTo(to[0], to[1]);
+    }
+    g.stroke();
+}
+
+function fillTrain(g, V, E, width, height) {
+    if (E.length === 0) {
+        return;
+    }
+    g.fillStyle = 'snow';
+    g.beginPath();
+    var from;
+    var to;
+
+    from = transform([V[E[0][0]][0], V[E[0][0]][1]], width, height);
+    g.moveTo(from[0], from[1]);
+
+    to = transform([V[E[0][1]][0], V[E[0][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[2][1]][0], V[E[2][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[1][1]][0], V[E[1][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[0][0]][0], V[E[0][0]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    g.fill();
+    g.fillStyle = 'black';
+    
+    to = transform([V[E[4][1]][0], V[E[4][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[9][1]][0], V[E[9][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[1][1]][0], V[E[1][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[0][0]][0], V[E[0][0]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    g.fill();
+    g.fillStyle = 'red';
+
+    to = transform([V[E[0][1]][0], V[E[0][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[5][1]][0], V[E[5][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[8][0]][0], V[E[8][0]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[0][0]][0], V[E[0][0]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    g.fill();
+    g.fillStyle = 'blue';
+
+    to = transform([V[E[0][1]][0], V[E[0][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[5][1]][0], V[E[5][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[10][1]][0], V[E[10][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[2][1]][0], V[E[2][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[0][1]][0], V[E[0][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    g.fill();
+    g.fillStyle = 'yellow';
+
+    to = transform([V[E[2][1]][0], V[E[2][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[1][1]][0], V[E[1][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[6][1]][0], V[E[6][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[7][1]][0], V[E[7][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[7][0]][0], V[E[7][0]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    g.fill();
+    g.fillStyle = 'purple';
+
+    to = transform([V[E[7][1]][0], V[E[7][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[6][1]][0], V[E[6][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[4][1]][0], V[E[4][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[5][1]][0], V[E[5][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    to = transform([V[E[7][1]][0], V[E[7][1]][1]], width, height);
+    g.lineTo(to[0], to[1]);
+
+    g.fill();
 }
 
 function drawSquare(g, x, y) {
@@ -424,7 +762,7 @@ function drawExample(g, x, y, z, width, height) {
 }
 
 function drawClock(g, x, y, width, height, clicked) {
-    g.fillStyle = 'lightgreen';
+    g.fillStyle = 'snow';
     if (clicked) {
         g.fillStyle = '#FFFF99';
     }
