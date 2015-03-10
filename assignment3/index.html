@@ -2,7 +2,7 @@
 Shikuan Huang
 Professor Perlin
 Computer Graphics
-18 February, 2015
+25 February, 2015
 
 Assignment 3
 -->
@@ -30,36 +30,60 @@ Assignment 3
    uniform vec3  uCursor;
    varying vec3  vPosition;
 
-   vec4 spheres[3];
-   vec3 materials[3];
+   vec4 sphere[3];
+   vec3 material[3];
 
-   vec3 Lrgb;
-   vec3 Ldir;
-
-   vec3 Lrgb2;
-   vec3 Ldir2;
+   vec3 Lrgb[2];
+   vec3 Ldir[2];
 
    // Compute intersection of a ray with a sphere, if any.  Return t.
    // If there is no intersection, return 10000.
 
-   vec2 raySphere(vec3 V, vec3 W, vec4 S) {
-
+   float raySphere(vec3 V, vec3 W, vec4 S) {
       // YOU NEED TO COMPUTE t, BY SETTING UP AND THEN SOLVING A QUADRATIC EQUATION.
-      float a = dot(W, W);
+      float a = 1.;
       float b = 2. * dot(W, (V - S.xyz));
-      float c = dot((V - S.xyz), (V - S.xyz)) - pow(S.w, 2.);
-      float discriminant = pow(b, 2.) - 4. * a * c;
-      if (discriminant >= 0.)
-      {
-        float root1 = (-b - sqrt(discriminant)) / (2. * a);
-        float root2 = (-b + sqrt(discriminant)) / (2. * a);
-      
+      float c = dot(V - S.xyz, V - S.xyz) - pow(S.w, 2.);
+
+      float d = sqrt(pow(b, 2.) - (4. * a * c));
+      if (d > 0.) {
+        float root1 = ((-b) - d) / (2. * a);
+        float root2 = ((-b) + d) / (2. * a);
+        
+        return root1;
+      }
+      else {
+        return 10000.;
+      }
+   }
+
+   vec2 raySphereRoots(vec3 V, vec3 W, vec4 S) {
+      float a = 1.;
+      float b = 2. * dot(W, (V - S.xyz));
+      float c = dot(V - S.xyz, V - S.xyz) - pow(S.w, 2.);
+
+      float d = sqrt(pow(b, 2.) - (4. * a * c));
+      if (d > 0.) {
+        float root1 = ((-b) - d) / (2. * a);
+        float root2 = ((-b) + d) / (2. * a);
+ 
         return vec2(root1, root2);
       }
-      else
-      {
+      else {
         return vec2(10000., 10000.);
       }
+   }
+
+   bool isInShadow(vec3 point, vec3 lightDir, int sNum) {
+     for (int i = 0; i < 3; i++) {
+       if (!(i == sNum)) {
+         float st = raySphere(point, lightDir, sphere[i]);
+         if (st < 10000. && st > 0.) {
+           return true;
+         }
+       }
+     }
+    return false;
    }
 
    // Diffusely shade a sphere.
@@ -67,7 +91,7 @@ Assignment 3
    //    sphere is the x,y,z,r definition of the sphere.
    //    material is the r,g,b color of the sphere.
 
-   vec3 shadeSphere(vec3 point, vec4 sphere, vec3 material, vec3 rayDir) {
+   vec3 shadeSphere(vec3 point, vec4 sphere, vec3 material, vec3 rayDir, int sNum) {
       vec3 color = vec3(0.,0.,0.);
 
       // YOU NEED TO COMPUTE COLOR FOR A DIFFUSELY SHADED SPHERE.
@@ -75,149 +99,102 @@ Assignment 3
       // FOR THE AMBIENT COMPONENT OF THE DIFFUSE SHADING, YOU CAN
       // USE A SIMPLE APPROXIMATION SUCH AS: ambient = material / 5.;
       vec3 ambient = material / 5.;
-      vec3 normal = (point - sphere.xyz) / sphere.w;
+      
+      if (isInShadow(point + .01, Ldir[0], sNum)) {
+        color = ambient;
+      }
+      else {
+        vec3 normal = (point - sphere.xyz) / sphere.w;
 
-      // Phong Reflectance
-      vec3 R = 2. * dot(normal, Ldir) * normal - Ldir;
-      vec3 E = rayDir;
-      vec3 specular =  Lrgb * pow(max(0., dot(E, R)), 30.);
-
-      color = ambient + (Lrgb * (material * max(0., dot(normal, Ldir)) + specular));//+ (Lrgb2 * material * max(0., dot(normal, Ldir2)));
+        vec3 R0 = 2. * normal * dot(normal, Ldir[0]) - Ldir[0];
+        //vec3 R1 = 2. * normal * dot(normal, Ldir[1]) - Ldir[1];
+        vec3 SRrgb = material;
+        vec3 E = -rayDir;
+        vec3 specular0 = SRrgb * pow(max(0., dot(E, R0)), 40.);
+        //vec3 specular1 = SRrgb * pow(max(0., dot(E, R1)), 40.);
+    
+        vec3 light0 = Lrgb[0] * (material * max(0., dot(normal, Ldir[0])) + specular0);
+        // light1 = Lrgb[1] * (material * max(0., dot(normal, Ldir[1])) + specular1);
+        color = ambient + light0;// + light1;
+      }
 
       return color;
    }
-   
-   vec3 shadeShadow(vec3 point, vec4 sphere, vec3 material, vec3 rayDir) {
-      vec3 color = vec3(0.,0.,0.);
+
+   vec3 shadeShadow(vec3 point, vec4 sphere, vec3 material) {
+      vec3 color = vec3(0., 0., 0.);
+      
+      // We do not add in the diffuse and specular components of surface reflectance.
       vec3 ambient = material / 5.;
       color = ambient;
+
       return color;
    }
-    
+
    void main(void) {
       vec2 c = uCursor.xy;
 
-      Lrgb = vec3(1.,.5,1.);
-      Ldir = normalize(vec3(c.x, c.y, 1. - 2. * dot(c, c)));
-
-      //Lrgb2 = vec3(sin(uTime), .2 + uCursor.z / 2., .7);
-      //Ldir2 = normalize(vec3(c.y, c.x, 1. - 2. * dot(c, c)));
+      Lrgb[0] = vec3(1.,.5,0.);
+      Ldir[0] = normalize(vec3(c.x, c.y, 1. - 2. * dot(c, c)));
+      //Lrgb[1] = vec3(.5, .7, .4);
+      //Ldir[1] = Ldir[0];//normalize(vec3(c.x, c.x, 1. - 2. * dot(c, c)));
 
       // YOU NEED TO COMPUTE V AND W TO CREATE THE RAY FOR THIS PIXEL,
       // USING vPosition.x AND vPosition.y.
 
       vec3 V, W;
       V = vec3(0., 0., 0.);
-      W = normalize(vec3(vPosition.x, vPosition.y, 2.5));
+      W = normalize(vec3(vPosition.x, vPosition.y, -1.5));
 
       // YOU NEED TO SET x,y,z AND r FOR sphere.
-      float r = .5;
-      float modifier = 0.;
-      for (int i = 0; i < 3; i++) {
-        spheres[i] = vec4(0.75 - modifier, 0.75 - modifier, 3.5 - modifier, r);
-        modifier = modifier + .5;
+      float x1, y1;
+      x1 = -.25;
+      y1 = -.25;
+      
+      if (uCursor.z == 1.) {
+        x1 = uCursor.x;
+        y1 = uCursor.y;
       }
-      spheres[1] = vec4(.5 - uCursor.z, -.4 + uCursor.z, 2.5, r);
-      //sphere = vec4(0., 0., 1.5, r);
+
+      sphere[0] = vec4(x1, y1, -1.5, .5);
+      sphere[1] = vec4(0.5, 0.75, -2.75, .5);
+      sphere[2] = vec4(.25, -.25, -1.5, .3);
       // YOU NEED TO SET r,g,b FOR material.
-      materials[0] = vec3(0.5, 0.4, 0.5);
-      materials[1] = vec3(0.2, 0.2, 0.3);
-      materials[2] = vec3(0.7, 0.2, 0.4);
+      material[0] = vec3(0.5, 0.6, 0.8);
+      material[1] = vec3(0.3, 0.5, 0.4);
+      material[2] = vec3(0.3, 0.3, 0.4);
 
       vec3 color = vec3(0., 0., 0.);
+      float t[3];
 
-      vec2 t = raySphere(V, W, spheres[0]);
-      vec2 t2 = raySphere(V, W, spheres[1]);
-      vec2 t3 = raySphere(V, W, spheres[2]);
-
-      if (t.y < 10000. && t.y < t2.y && t.y < t3.y)
-         color = shadeSphere(V + t.y * W, spheres[0], materials[0], W);
-      
-      if (t2.y < 10000. && t2.y < t.y && t2.y < t3.y)
-         color = shadeSphere(V + t2.y * W, spheres[1], materials[1], W);
-
-      if (t3.y < 10000. && t3.y < t.y && t3.y < t2.y)
-         color = shadeSphere(V + t3.y * W, spheres[2], materials[2], W);
-      /*
-      vec2 intersection = vec2(min(t2.x, t3.x), max(t2.y, t3.y));
-      if (intersection.x < intersection.y)
-        color = shadeSphere(V + intersection.y * W, spheres[1], materials[1], W);
-      */
-
-      // Shadow
-      vec3 sV1 = (V + t.y * W) + vec3(.0001, .0001, .0001);
-      vec3 sW1 = -Ldir;
-      vec2 shadowt12 = raySphere(sV1, sW1, spheres[1]);
-      vec2 shadowt13 = raySphere(sV1, sW1, spheres[2]);
-
-      vec3 sV2 = (V + t2.y * W) + vec3(.0001, .0001, .0001);
-      vec3 sW2 = -Ldir;
-      vec2 shadowt23 = raySphere(sV2, sW2, spheres[2]);
-      vec2 shadowt21 = raySphere(sV2, sW2, spheres[0]);
-
-      vec3 sV3 = (V + t3.y * W) + vec3(.0001, .0001, .0001);
-      vec3 sW3 = -Ldir;
-      vec2 shadowt32 = raySphere(sV3, sW3, spheres[1]);
-      vec2 shadowt31 = raySphere(sV3, sW3, spheres[0]);
-
-      if (shadowt12.y < 10000. && t.y < t2.y && t.y < t3.y)
-      color = shadeShadow(V + t.y * W, spheres[0], materials[0], W);
-
-      if (shadowt13.y < 10000. && t.y < t2.y && t.y < t3.y)
-      color = shadeShadow(V + t.y * W, spheres[0], materials[0], W);
-
-      if (shadowt23.y < 10000. && t2.y < t.y && t2.y < t3.y)
-        color = shadeShadow(V + t2.y * W, spheres[1], materials[1], W);
-
-      if (shadowt21.y < 10000. && t2.y < t.y && t2.y < t3.y)
-        color = shadeShadow(V + t2.y * W, spheres[1], materials[1], W);
-      
-      if (shadowt32.y < 10000. && t3.y < t.y && t3.y < t2.y)
-        color = shadeShadow(V + t3.y * W, spheres[2], materials[2], W);
-
-      if (shadowt31.y < 10000. && t3.y < t.y && t3.y < t2.y)
-        color = shadeShadow(V + t3.y * W, spheres[2], materials[2], W);
-
-      
-
+      t[0] = raySphere(V, W, sphere[0]);
+      t[1] = raySphere(V, W, sphere[1]);
+      t[2] = raySphere(V, W, sphere[2]);           
     
-      //shadeShadow(V + t2 * W, spheres[1], materials[1], t2);
+      
+      // Draw the back sphere
+      if (t[1] < 10000. && t[1] < t[0] && t[1] < t[2]) {
+         color = shadeSphere(V + t[1] * W, sphere[1], material[1], W, 1);
+      }
+
+
+      // Intersection
+      vec2 s0Roots = raySphereRoots(V, W, sphere[0]);
+      vec2 s2Roots = raySphereRoots(V, W, sphere[2]);
+      vec2 intersection = vec2(max(s0Roots.y, s2Roots.y), min(s0Roots.x, s2Roots.x));
+
+      if (intersection.x > intersection.y) {
+        if (t[0] < t[2]) {
+          color = shadeSphere(V + t[0] * W, sphere[0], material[0], W, 0);
+        }
+        else {
+          color = shadeSphere(V + t[2] * W, sphere[2], material[2], W, 2);
+        }
+      }
+
 
       gl_FragColor = vec4(sqrt(color), 1.); // Do Gamma correction.
    }
-
-
-    /*
-    vec3 shadeShadow(vec3 point, vec4 sphere, vec3 material, vec3 shadowRayDir) {
-    vec3 color = vec3(0.,0.,0.);
-
-    // YOU NEED TO COMPUTE COLOR FOR A DIFFUSELY SHADED SPHERE.
-
-    // FOR THE AMBIENT COMPONENT OF THE DIFFUSE SHADING, YOU CAN
-    // USE A SIMPLE APPROXIMATION SUCH AS: ambient = material / 5.;
-    vec3 ambient = material / 5.;
-    vec3 normal = (point - sphere.xyz) / sphere.w;
-
-    color = ambient + (Lrgb * material * max(0., dot(normal, shadowRayDir)));
-
-    return color;
-    }
-    */
-
-    /*
-    vec3 shadeShadow(vec3 point, vec4 sphere, vec3 material, float t) {
-    vec3 color = vec3(0., 0., 0.);
-    //vec3 shadowRayOrigin = point + vec3(.0001, .0001, .0001);
-    //vec3 shadowRayDir = -Ldir;
-    //vec3 shadowPt = point + t * shadowRayDir;
-
-    vec3 ambient = material /5.;
-    vec3 normal = (point - sphere.xyz) / sphere.w;
-
-    color = ambient + (Lrgb * material * max(0., dot(normal, shadowRayDir)));
-
-    return color;
-    }*/
 </script>
 
 <script>
