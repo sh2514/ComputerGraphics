@@ -119,28 +119,42 @@ function drawOnCanvas1(cube) {
         var transform3 = new matrix();
         var transform4 = new matrix();
         var transform5 = new matrix();
+
+        var animate = new matrix();
         var copy = cube.makeCopy();
 
         if (this.cursor.z) {
-            transform1.scale(1, 1, 1);
+            animate.scale(1, 1, 1);
+            animate.rotateX(this.cursor.y / 100);
+            animate.rotateY(this.cursor.x / 100);
+            animate.rotateZ(-this.cursor.x / 100);
+
+            /*transform1.scale(1, 1, 1);
             transform2.rotateX(this.cursor.y / 100);
             transform3.rotateY(this.cursor.x / 100);
-            transform4.rotateZ(-this.cursor.x / 100);
+            transform4.rotateZ(-this.cursor.x / 100);*/
             transform5.perspective(-2.4);
         }
         else {
-            transform1.scale(Math.tan(time), Math.tan(time), Math.tan(time));
+            animate.scale(.5, .5, .5);
+            animate.rotateX(Math.tan(time));
+            animate.rotateY(Math.tan(time));
+            animate.rotateZ(Math.tan(time));
+            animate.perspective(-2.4);
+        
+            /*transform1.scale(Math.tan(time), Math.tan(time), Math.tan(time));
             transform2.rotateX(Math.tan(time));
             transform3.rotateY(Math.tan(time));
-            transform4.rotateZ(Math.tan(time));
+            transform4.rotateZ(Math.tan(time));*/
             transform5.perspective(-2.4);
         }
 
         for (var i = 0; i < cube.v.length; i++) {
-            copy.v[i] = transform1.dot(copy.v[i]);
+            copy.v[i] = animate.dot(copy.v[i]);
+            /*copy.v[i] = transform1.dot(copy.v[i]);
             copy.v[i] = transform2.dot(copy.v[i]);
             copy.v[i] = transform3.dot(copy.v[i]);
-            copy.v[i] = transform4.dot(copy.v[i]);
+            copy.v[i] = transform4.dot(copy.v[i]);*/
             copy.v[i] = transform5.dot(copy.v[i]);
 
             copy.v[i].x = -2.4 * copy.v[i].x / copy.v[i].z;
@@ -217,33 +231,57 @@ matrix.prototype = {
         [0, 0, 1, 0],
         [0, 0, 0, 1]];
     },
+    multiply: function (argMatrix) {
+        var newMatrix = new matrix();
+        var currentSum = 0;
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 4; j++) {
+                for (var k = 0; k < 4; k++) {
+                    currentSum += this.m[i][k] * argMatrix[k][j];
+                }
+                newMatrix.m[i][j] = currentSum;
+                currentSum = 0;
+            }
+        }
+        this.m = newMatrix.m;
+    },
     translate: function (x, y, z) {
-        this.m[0][3] = x;
-        this.m[1][3] = y;
-        this.m[2][3] = z;
+        var transformMatrix = new matrix();
+        transformMatrix.m[0][3] = x;
+        transformMatrix.m[1][3] = y;
+        transformMatrix.m[2][3] = z;
+        this.multiply(transformMatrix.m);
     },
-    rotateX: function(theta) {
-        this.m[1][1] = Math.cos(theta);
-        this.m[1][2] = -Math.sin(theta);
-        this.m[2][1] = Math.sin(theta);
-        this.m[2][2] = Math.cos(theta);
+    rotateX: function (theta) {
+        var transformMatrix = new matrix();
+        transformMatrix.m[1][1] = Math.cos(theta);
+        transformMatrix.m[1][2] = -Math.sin(theta);
+        transformMatrix.m[2][1] = Math.sin(theta);
+        transformMatrix.m[2][2] = Math.cos(theta);
+        this.multiply(transformMatrix.m);
     },
-    rotateY: function(theta) {
-        this.m[0][0] = Math.cos(theta);
-        this.m[2][0] = Math.sin(theta);
-        this.m[0][2] = -Math.sin(theta);
-        this.m[2][2] = Math.cos(theta);
+    rotateY: function (theta) {
+        var transformMatrix = new matrix();
+        transformMatrix.m[0][0] = Math.cos(theta);
+        transformMatrix.m[2][0] = Math.sin(theta);
+        transformMatrix.m[0][2] = -Math.sin(theta);
+        transformMatrix.m[2][2] = Math.cos(theta);
+        this.multiply(transformMatrix.m);
     },
-    rotateZ: function(theta) {
-        this.m[0][0] = Math.cos(theta);
-        this.m[0][1] = -Math.sin(theta);
-        this.m[1][0] = Math.sin(theta);
-        this.m[1][1] = Math.cos(theta);
+    rotateZ: function (theta) {
+        var transformMatrix = new matrix();
+        transformMatrix.m[0][0] = Math.cos(theta);
+        transformMatrix.m[0][1] = -Math.sin(theta);
+        transformMatrix.m[1][0] = Math.sin(theta);
+        transformMatrix.m[1][1] = Math.cos(theta);
+        this.multiply(transformMatrix.m);
     }, 
-    scale: function(x, y, z) {
-        this.m[0][0] = x;
-        this.m[1][1] = y;
-        this.m[2][2] = z;
+    scale: function (x, y, z) {
+        var transformMatrix = new matrix();
+        transformMatrix.m[0][0] = x;
+        transformMatrix.m[1][1] = y;
+        transformMatrix.m[2][2] = z;
+        this.multiply(transformMatrix.m);
     },
     // Arguments are vectors
     transform: function(src, dst) {
@@ -253,7 +291,9 @@ matrix.prototype = {
         dst.w = (this.height / 2) - src.w * (this.width / 2);
     },
     perspective: function (p) {
-        this.m[2][3] = p;
+        var transformMatrix = new matrix();
+        transformMatrix.m[2][3] = p;
+        this.multiply(transformMatrix.m);
     },
     // Argument is a vector
     dot: function (rightVector) {
@@ -273,7 +313,7 @@ matrix.prototype = {
         var productVector = new Vector4();
         productVector.copyArray(product);
         return productVector;
-    }
+    },
 }
 
 /* ==================================================
