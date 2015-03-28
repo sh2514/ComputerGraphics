@@ -107,8 +107,11 @@ function drawDrawings() {
     train1.v[62] = new Vector4(-.75, .01, 0, 1);
     train1.v[63] = new Vector4(-.75, .4, 0, 1);
 
+    var cylinder1 = new cylinder();
+
     drawOnCanvas1(cube1);
     drawOnCanvas2(train1);
+    drawOnCanvas3(cylinder1);
 }
 
 function drawOnCanvas1(cube) {
@@ -210,6 +213,33 @@ function drawOnCanvas2(train) {
         else {
             copy.draw(g, 50, 50, canvas.width / 1.25, canvas.height / 1.25);
         }
+    }
+}
+
+function drawOnCanvas3(argCylinder) {
+    var canvas = initCanvas('canvas3');
+    canvas.update = function (g) {
+        var frameCopy = new cylinder();
+        frameCopy.init();
+        
+        var animate = new matrix();
+        var perspectiveMatrix = new matrix();
+
+        animate.rotateX(this.cursor.y / 100);
+        animate.rotateY(this.cursor.x / 100);
+        animate.rotateZ(-this.cursor.x / 100);
+        perspectiveMatrix.perspective(-2.4);
+
+        for (var i = 0; i < frameCopy.v.length; i++) {
+            frameCopy.v[i] = animate.dot(frameCopy.v[i]);
+            
+            frameCopy.v[i] = perspectiveMatrix.dot(frameCopy.v[i]);
+            frameCopy.v[i].x = -2.4 * frameCopy.v[i].x / frameCopy.v[i].z;
+            frameCopy.v[i].y = -2.4 * frameCopy.v[i].y / frameCopy.v[i].z;
+            frameCopy.v[i].z = -2.4 / frameCopy.v[i].z;
+        }
+
+        frameCopy.draw(g, 100, 100, .5 * canvas.width, .5 * canvas.height);
     }
 }
 
@@ -345,6 +375,122 @@ Vector4.prototype = {
         this.z = a[2];
         this.w = a[3];
     },
+}
+
+/* ==================================================
+Parametric Cylinder
+================================================== */
+function cylinder() {
+    this.v = [];
+    this.e = [];
+}
+cylinder.prototype = {
+    init: function (vNum) {
+        var vertexEnum = 0;
+        for (var i = 0; i < 20; i++) {
+            for (var step = 0; step < 20; step++) {
+                var u = 1 / 20 * step;
+                var v = 1 / 20 * i;
+                var theta = 2 * Math.PI * u;
+
+                this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
+                this.v[vertexEnum].x = Math.sin(theta);
+                this.v[vertexEnum].y = 2 * v - 1;
+                this.v[vertexEnum].z = Math.cos(theta);
+                vertexEnum++;
+            }
+        }
+
+        var edgeEnum = 0;
+        for (var i = 0; i < 20; i++) {
+            for (var step = 0; step < 20; step++) {
+                // Horizontal edges
+                if (step < 19) {
+                    this.e[edgeEnum] = [];
+                    this.e[edgeEnum][0] = step + (i * 20);
+                    this.e[edgeEnum][1] = step + 1 + (i * 20);
+                    edgeEnum++;
+                }
+                else {
+                    this.e[edgeEnum] = [];
+                    this.e[edgeEnum][0] = step + (i * 20);
+                    this.e[edgeEnum][1] = (i * 20);
+                    edgeEnum++;
+                }
+                // Vertical edges
+                if (i < 19) {
+                    this.e[edgeEnum] = [];
+                    this.e[edgeEnum][0] = step + (i * 20);
+                    this.e[edgeEnum][1] = step + 20 + (i * 20);
+                    edgeEnum++;
+                }
+            }
+        }
+    },
+    init2: function (vNum) {
+        var vertexEnum = 0;
+        for (var i = 0; i < 20; i++) {
+            for (var step = 0; step < 20; step++) {
+                var u = 1 / 20 * step;
+                var v = 1 / 20 * i;
+                var theta = 2 * Math.PI * u;
+
+                this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
+                this.v[vertexEnum].x = Math.sin(theta);
+                this.v[vertexEnum].y = 2 * v - 1;
+                this.v[vertexEnum].z = Math.cos(theta);
+                vertexEnum++;
+
+                /*
+                this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
+                this.v[vertexEnum].x = Math.random();
+                this.v[vertexEnum].y = Math.random();
+                this.v[vertexEnum].z = Math.random();
+                vertexEnum++;*/
+            }
+        }
+
+        var edgeEnum = 0;
+        for (var i = 0; i < 19; i++) {
+            for (var step = 0; step < 19; step++) {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = step + 1 + (i * 20);
+                edgeEnum++;
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = step + 10 + (i * 20);
+                edgeEnum++;
+            }
+        }
+    },
+    draw: function (g, xOff, yOff, width, height) {
+        var transformMatrix = new matrix(width, height);
+        g.strokeStyle = 'black';
+        g.beginPath();
+
+        for (var i = 0; i < this.e.length; i++) {
+            var transformedFrom = new Vector4();
+            transformedFrom.copy(this.v[this.e[i][0]]);
+            transformMatrix.transform(this.v[this.e[i][0]], transformedFrom);
+
+            var transformedTo = new Vector4();
+            transformedTo.copy(this.v[this.e[i][1]]);
+            transformMatrix.transform(this.v[this.e[i][1]], transformedTo);
+
+            g.moveTo(transformedFrom.x + xOff, transformedFrom.y + yOff);
+            g.lineTo(transformedTo.x + xOff, transformedTo.y + yOff);
+        }
+        g.stroke();
+    },
+    makeCopy: function () {
+        var copy = new cylinder();
+        for (var i = 0; i < this.v.length; i++) {
+            copy.v[i] = new Vector4(0, 0, 0, 1);
+            copy.v[i].copy(this.v[i]);
+        }
+        return copy;
+    }
 }
 
 /* ==================================================
