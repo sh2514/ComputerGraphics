@@ -20,123 +20,28 @@ function loadScript(url, callback) {
 }
 
 function drawDrawings() {
-    var cube1 = new cube();
-    cube1.v[0] = new Vector4(-1, -1, -1, 1);
-    cube1.v[1] = new Vector4(1, -1, -1, 1);
-    cube1.v[2] = new Vector4(-1, 1, -1, 1);
-    cube1.v[3] = new Vector4(1, 1, -1, 1);
-    cube1.v[4] = new Vector4(-1, -1, 1, 1);
-    cube1.v[5] = new Vector4(1, -1, 1, 1);
-    cube1.v[6] = new Vector4(-1, 1, 1, 1);
-    cube1.v[7] = new Vector4(1, 1, 1, 1);
-
-    var train1 = new train();
-    // Car 1
-    train1.v[0] = new Vector4(.55, 0, -.15, 1);
-    train1.v[1] = new Vector4(.85, 0, -.15, 1);
-    train1.v[2] = new Vector4(.55, .35, -.15, 1);
-    train1.v[3] = new Vector4(.85, .25, -.15, 1);
-    train1.v[4] = new Vector4(.55, 0, .15, 1);
-    train1.v[5] = new Vector4(.85, 0, .15, 1);
-    train1.v[6] = new Vector4(.55, .35, .15, 1);
-    train1.v[7] = new Vector4(.85, .25, .15, 1);
-    // Car 2
-    train1.v[8] = new Vector4(-.05, 0, -.20, 1);
-    train1.v[9] = new Vector4(.5, 0, -.20, 1);
-    train1.v[10] = new Vector4(-.05, .45, -.20, 1);
-    train1.v[11] = new Vector4(.5, .45, -.20, 1);
-    train1.v[12] = new Vector4(-.05, 0, .20, 1);
-    train1.v[13] = new Vector4(.5, 0, .20, 1);
-    train1.v[14] = new Vector4(-.05, .45, .20, 1);
-    train1.v[15] = new Vector4(.5, .45, .20, 1);
-    // Car 3
-    train1.v[16] = new Vector4(-.75, 0, -.20, 1);
-    train1.v[17] = new Vector4(-.1, 0, -.20, 1);
-    train1.v[18] = new Vector4(-.75, .45, -.20, 1);
-    train1.v[19] = new Vector4(-.1, .45, -.20, 1);
-    train1.v[20] = new Vector4(-.75, 0, .20, 1);
-    train1.v[21] = new Vector4(-.1, 0, .20, 1);
-    train1.v[22] = new Vector4(-.75, .45, .20, 1);
-    train1.v[23] = new Vector4(-.1, .45, .20, 1);
-    // Connect 1
-    train1.v[24] = new Vector4(.5, 0, -.05, 1);
-    train1.v[25] = new Vector4(.55, 0, -.05, 1);
-    train1.v[26] = new Vector4(.5, 0, .05, 1);
-    train1.v[27] = new Vector4(.55, 0, .05, 1);
-    // Connect 2
-    train1.v[28] = new Vector4(-.1, 0, -.05, 1);
-    train1.v[29] = new Vector4(-.05, 0, -.05, 1);
-    train1.v[30] = new Vector4(-.1, 0, .05, 1);
-    train1.v[31] = new Vector4(-.05, 0, .05, 1);
-    // Car 1 Door
-    train1.v[32] = new Vector4(.6, .01, .15, 1);
-    train1.v[33] = new Vector4(.7, .01, .15, 1);
-    train1.v[34] = new Vector4(.6, .2, .15, 1);
-    train1.v[35] = new Vector4(.7, .2, .15, 1);
-    // Car 2 Door
-    train1.v[36] = new Vector4(.35, .01, .20, 1);
-    train1.v[37] = new Vector4(.45, .01, .20, 1);
-    train1.v[38] = new Vector4(.35, .2, .20, 1);
-    train1.v[39] = new Vector4(.45, .2, .20, 1);
-    // Car 3 Door
-    train1.v[40] = new Vector4(-.25, .01, .20, 1);
-    train1.v[41] = new Vector4(-.15, .01, .20, 1);
-    train1.v[42] = new Vector4(-.25, .2, .20, 1);
-    train1.v[43] = new Vector4(-.15, .2, .20, 1);
-    // Car 1 Window
-    train1.v[44] = new Vector4(.85, .1, -.12, 1);
-    train1.v[45] = new Vector4(.85, .2, -.12, 1);
-    train1.v[46] = new Vector4(.85, .1, .12, 1);
-    train1.v[47] = new Vector4(.85, .2, .12, 1);
-    // Car 2 Windows
-    train1.v[48] = new Vector4(0, .1, -.20, 1);
-    train1.v[49] = new Vector4(.3, .1, -.20, 1);
-    train1.v[50] = new Vector4(0, .2, -.20, 1);
-    train1.v[51] = new Vector4(.3, .2, -.20, 1);
-    train1.v[52] = new Vector4(0, .1, .20, 1);
-    train1.v[53] = new Vector4(.3, .1, .20, 1);
-    train1.v[54] = new Vector4(0, .2, .20, 1);
-    train1.v[55] = new Vector4(.3, .2, .20, 1);
-    // Car 3 Back Doors
-    train1.v[56] = new Vector4(-.75, .01, -.17, 1);
-    train1.v[57] = new Vector4(-.75, .4, -.17, 1);
-    train1.v[58] = new Vector4(-.75, .01, 0, 1);
-    train1.v[59] = new Vector4(-.75, .4, 0, 1);
-    train1.v[60] = new Vector4(-.75, .01, .17, 1);
-    train1.v[61] = new Vector4(-.75, .4, .17, 1);
-    train1.v[62] = new Vector4(-.75, .01, 0, 1);
-    train1.v[63] = new Vector4(-.75, .4, 0, 1);
-
-    var cylinder1 = new cylinder();
-
-    drawOnCanvas1(cube1);
-    drawOnCanvas2(train1);
-    drawOnCanvas3(cylinder1);
+    drawOnCanvas1();
+    drawOnCanvas2();
+    drawOnCanvas3();
+    drawOnCanvas4();
+    drawOnCanvas5();
+    //drawOnCanvas6();
 }
 
-function drawOnCanvas1(cube) {
+function drawOnCanvas1() {
     var canvas = initCanvas('canvas1');
     canvas.update = function (g) {
-        var transform1 = new matrix();
-        var transform2 = new matrix();
-        var transform3 = new matrix();
-        var transform4 = new matrix();
-        var transform5 = new matrix();
-
         var animate = new matrix();
-        var copy = cube.makeCopy();
+        var perspectiveMatrix = new matrix();
+
+        var copy = new cube();
 
         if (this.cursor.z) {
             animate.scale(1, 1, 1);
             animate.rotateX(this.cursor.y / 100);
             animate.rotateY(this.cursor.x / 100);
             animate.rotateZ(-this.cursor.x / 100);
-
-            /*transform1.scale(1, 1, 1);
-            transform2.rotateX(this.cursor.y / 100);
-            transform3.rotateY(this.cursor.x / 100);
-            transform4.rotateZ(-this.cursor.x / 100);*/
-            transform5.perspective(-2.4);
+            perspectiveMatrix.perspective(-2.4);
         }
         else {
             animate.scale(.5, .5, .5);
@@ -144,21 +49,12 @@ function drawOnCanvas1(cube) {
             animate.rotateY(Math.tan(time));
             animate.rotateZ(Math.tan(time));
             animate.perspective(-2.4);
-        
-            /*transform1.scale(Math.tan(time), Math.tan(time), Math.tan(time));
-            transform2.rotateX(Math.tan(time));
-            transform3.rotateY(Math.tan(time));
-            transform4.rotateZ(Math.tan(time));*/
-            transform5.perspective(-2.4);
+            perspectiveMatrix.perspective(-2.4);
         }
 
-        for (var i = 0; i < cube.v.length; i++) {
+        for (var i = 0; i < copy.v.length; i++) {
             copy.v[i] = animate.dot(copy.v[i]);
-            /*copy.v[i] = transform1.dot(copy.v[i]);
-            copy.v[i] = transform2.dot(copy.v[i]);
-            copy.v[i] = transform3.dot(copy.v[i]);
-            copy.v[i] = transform4.dot(copy.v[i]);*/
-            copy.v[i] = transform5.dot(copy.v[i]);
+            copy.v[i] = perspectiveMatrix.dot(copy.v[i]);
 
             copy.v[i].x = -2.4 * copy.v[i].x / copy.v[i].z;
             copy.v[i].y = -2.4 * copy.v[i].y / copy.v[i].z;
@@ -169,38 +65,32 @@ function drawOnCanvas1(cube) {
     }
 }
 
-function drawOnCanvas2(train) {
+function drawOnCanvas2() {
     var canvas = initCanvas('canvas2');
     canvas.update = function (g) {
-        var transform1 = new matrix();
-        var transform2 = new matrix();
-        var transform3 = new matrix();
-        var transform4 = new matrix();
-        var transform5 = new matrix();
+        var animate = new matrix();
+        var perspectiveMatrix = new matrix();
 
-        var copy = train.makeCopy();
+        var copy = new train();
 
         if (this.cursor.z) {
-            transform1.scale(1, 1, 1);
-            transform2.rotateY(-this.cursor.x / 100);
-            transform3.rotateZ(0);
-            transform4.rotateX(this.cursor.y / 100 - 2);
-            transform5.perspective(-2.4);
+            animate.scale(1, 1, 1);
+            animate.rotateZ(0);
+            animate.rotateX(this.cursor.y / 100 - 2);
+            animate.rotateY(-this.cursor.x / 100);           
+            perspectiveMatrix.perspective(-2.4);
         }
         else {
-            transform1.scale(1, 1, 1);
-            transform2.rotateY(time);
-            transform3.rotateZ(0);
-            transform4.rotateX(Math.PI / 9);
-            transform5.perspective(-2.4);
+            animate.scale(1, 1, 1);
+            animate.rotateZ(0);
+            animate.rotateX(Math.PI / 9);
+            animate.rotateY(time);
+            perspectiveMatrix.perspective(-2.4);
         }
 
-        for (var i = 0; i < train.v.length; i++) {
-            copy.v[i] = transform1.dot(copy.v[i]);
-            copy.v[i] = transform2.dot(copy.v[i]);
-            copy.v[i] = transform3.dot(copy.v[i]);
-            copy.v[i] = transform4.dot(copy.v[i]);
-            copy.v[i] = transform5.dot(copy.v[i]);
+        for (var i = 0; i < copy.v.length; i++) {
+            copy.v[i] = animate.dot(copy.v[i]);
+            copy.v[i] = perspectiveMatrix.dot(copy.v[i]);
 
             copy.v[i].x = -2.4 * copy.v[i].x / copy.v[i].z;
             copy.v[i].y = -2.4 * copy.v[i].y / copy.v[i].z;
@@ -208,7 +98,7 @@ function drawOnCanvas2(train) {
         }
 
         if (this.cursor.z) {
-            copy.draw(g, -50, 0, canvas.width * 1.5, canvas.height * 1.5);
+            copy.draw(g, -50, -50, canvas.width * 1.5, canvas.height * 1.5);
         }
         else {
             copy.draw(g, 50, 50, canvas.width / 1.25, canvas.height / 1.25);
@@ -216,11 +106,10 @@ function drawOnCanvas2(train) {
     }
 }
 
-function drawOnCanvas3(argCylinder) {
+function drawOnCanvas3() {
     var canvas = initCanvas('canvas3');
     canvas.update = function (g) {
         var frameCopy = new cylinder();
-        frameCopy.init();
         
         var animate = new matrix();
         var perspectiveMatrix = new matrix();
@@ -240,6 +129,122 @@ function drawOnCanvas3(argCylinder) {
         }
 
         frameCopy.draw(g, 100, 100, .5 * canvas.width, .5 * canvas.height);
+    }
+}
+
+function drawOnCanvas4() {
+    var canvas = initCanvas('canvas4');
+    canvas.update = function (g) {
+        var frameCopy = new cylinder();
+        frameCopy.init2();
+
+        var animate = new matrix();
+        var perspectiveMatrix = new matrix();
+
+        animate.rotateX(this.cursor.y / 100);
+        animate.rotateY(this.cursor.x / 100);
+        animate.rotateZ(-this.cursor.x / 100);
+        perspectiveMatrix.perspective(-2.4);
+
+        for (var i = 0; i < frameCopy.v.length; i++) {
+            frameCopy.v[i] = animate.dot(frameCopy.v[i]);
+
+            frameCopy.v[i] = perspectiveMatrix.dot(frameCopy.v[i]);
+            frameCopy.v[i].x = -2.4 * frameCopy.v[i].x / frameCopy.v[i].z;
+            frameCopy.v[i].y = -2.4 * frameCopy.v[i].y / frameCopy.v[i].z;
+            frameCopy.v[i].z = -2.4 / frameCopy.v[i].z;
+        }
+
+        frameCopy.draw(g, 100, 100, .5 * canvas.width, .5 * canvas.height);
+    }
+}
+
+function drawOnCanvas5() {
+    var canvas = initCanvas('canvas5');
+    canvas.update = function (g) {
+        var left = new sphere();
+        var right = new sphere();
+
+        var animate = new matrix();
+        var perspectiveMatrix = new matrix();
+
+        if (this.cursor.z) {
+            animate.rotateY(Math.PI);
+            animate.rotateX(this.cursor.y / 100);
+            animate.rotateY(this.cursor.x / 100);
+            animate.rotateZ(-this.cursor.x / 100);
+            perspectiveMatrix.perspective(-2.4);
+        }
+        else {
+            animate.rotateX(1.4);
+            animate.rotateX(-Math.abs(Math.sin(time)) / 3);
+            animate.rotateZ(-Math.cos(time) / 3);
+            perspectiveMatrix.perspective(-2.4);
+        }
+        
+
+        for (var i = 0; i < left.v.length; i++) {
+            left.v[i] = animate.dot(left.v[i]);
+            right.v[i] = animate.dot(right.v[i]);
+
+            left.v[i] = perspectiveMatrix.dot(left.v[i]);
+            left.v[i].x = -2.4 * left.v[i].x / left.v[i].z;
+            left.v[i].y = -2.4 * left.v[i].y / left.v[i].z;
+            left.v[i].z = -2.4 / left.v[i].z;
+
+            right.v[i] = perspectiveMatrix.dot(right.v[i]);
+            right.v[i].x = -2.4 * right.v[i].x / right.v[i].z;
+            right.v[i].y = -2.4 * right.v[i].y / right.v[i].z;
+            right.v[i].z = -2.4 / right.v[i].z;
+        }
+
+        left.drawEye(g, 75, 100, .3 * canvas.width, .3 * canvas.height);
+        right.drawEye(g, 250, 100, .3 * canvas.width, .3 * canvas.height);
+    }
+}
+
+function drawOnCanvas6() {
+    var canvas = initCanvas('canvas6');
+    canvas.update = function (g) {
+        var bomb = new sphere();
+        var top = new sphere();
+
+        var animate = new matrix();
+        var perspectiveMatrix = new matrix();
+
+        if (!this.cursor.z) {
+            animate.rotateY(Math.PI);
+            animate.rotateX(this.cursor.y / 100);
+            animate.rotateY(this.cursor.x / 100);
+            animate.rotateZ(-this.cursor.x / 100);
+            perspectiveMatrix.perspective(-2.4);
+        }
+        else {
+            animate.translate(0, Math.abs(Math.sin(time)), -Math.abs(Math.cos(time) * 10) + 2);
+            animate.rotateX(Math.sin(time));
+            animate.rotateY(Math.tan(time));
+
+            perspectiveMatrix.perspective(-2.4);
+        }
+
+
+        for (var i = 0; i < bomb.v.length; i++) {
+            bomb.v[i] = animate.dot(bomb.v[i]);
+            top.v[i] = animate.dot(bomb.v[i]);
+
+            bomb.v[i] = perspectiveMatrix.dot(bomb.v[i]);
+            bomb.v[i].x = -2.4 * bomb.v[i].x / bomb.v[i].z;
+            bomb.v[i].y = -2.4 * bomb.v[i].y / bomb.v[i].z;
+            bomb.v[i].z = -2.4 / bomb.v[i].z;
+
+            top.v[i] = perspectiveMatrix.dot(top.v[i]);
+            top.v[i].x = -2.4 * top.v[i].x / top.v[i].z;
+            top.v[i].y = -2.4 * top.v[i].y / top.v[i].z;
+            top.v[i].z = -2.4 / top.v[i].z;
+        }
+
+        bomb.draw(g, 200, 200, .3 * canvas.width, .3 * canvas.height);
+        top.draw(g, 250, 170, .1 * canvas.width, .1 * canvas.height);
     }
 }
 
@@ -378,55 +383,210 @@ Vector4.prototype = {
 }
 
 /* ==================================================
-Parametric Cylinder
+Sphere
+================================================== */
+function sphere() {
+    this.v = [];
+    this.e = [];
+    var vertexEnum = 0;
+
+    for (var i = 0; i < 20; i++) {
+        for (var step = 0; step < 20; step++) {
+            var u = 1 / 20 * step;
+            var v = 1 / 20 * i;
+            var theta = 2 * Math.PI * u;
+            var varphi = Math.PI * v - Math.PI / 2;
+
+            this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
+            this.v[vertexEnum].x = Math.cos(varphi) * Math.sin(theta);
+            this.v[vertexEnum].y = Math.sin(varphi);
+            this.v[vertexEnum].z = Math.cos(varphi) * Math.cos(theta);
+            vertexEnum++;
+        }
+    }
+    this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
+    this.v[vertexEnum].x = 0;
+    this.v[vertexEnum].y = 1;
+    this.v[vertexEnum].z = 0;
+    vertexEnum++;
+
+    var edgeEnum = 0;
+    for (var i = 0; i < 20; i++) {
+        for (var step = 0; step < 20; step++) {
+            // Horizontal edges
+            if (step < 19) {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = step + 1 + (i * 20);
+                edgeEnum++;
+            }
+            else {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = (i * 20);
+                edgeEnum++;
+            }
+            // Vertical edges
+            if (i < 19) {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = step + 20 + (i * 20);
+                edgeEnum++;
+            }
+            else {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = this.v.length - 1;
+                edgeEnum++;
+            }
+        }
+    }
+}
+sphere.prototype = {
+    draw: function (g, xOff, yOff, width, height) {
+        var transformMatrix = new matrix(width, height);
+
+        g.strokeStyle = 'black';
+        g.beginPath();
+        for (var i = 0; i < this.e.length; i++) {
+            var transformedFrom = new Vector4();
+            transformedFrom.copy(this.v[this.e[i][0]]);
+            transformMatrix.transform(this.v[this.e[i][0]], transformedFrom);
+
+            var transformedTo = new Vector4();
+            transformedTo.copy(this.v[this.e[i][1]]);
+            transformMatrix.transform(this.v[this.e[i][1]], transformedTo);
+
+            g.moveTo(transformedFrom.x + xOff, transformedFrom.y + yOff);
+            g.lineTo(transformedTo.x + xOff, transformedTo.y + yOff);
+        }
+        g.stroke();
+    },
+    drawEye: function (g, xOff, yOff, width, height) {
+        var transformMatrix = new matrix(width, height);
+
+        g.strokeStyle = 'snow';
+        g.beginPath();
+        for (var i = 0; i < this.e.length - 80; i++) {
+            var transformedFrom = new Vector4();
+            transformedFrom.copy(this.v[this.e[i][0]]);
+            transformMatrix.transform(this.v[this.e[i][0]], transformedFrom);
+
+            var transformedTo = new Vector4();
+            transformedTo.copy(this.v[this.e[i][1]]);
+            transformMatrix.transform(this.v[this.e[i][1]], transformedTo);
+
+            g.moveTo(transformedFrom.x + xOff, transformedFrom.y + yOff);
+            g.lineTo(transformedTo.x + xOff, transformedTo.y + yOff);
+        }
+        g.stroke();
+
+        g.strokeStyle = 'blue';
+        g.beginPath();
+        for (var i = this.e.length - 80; i < this.e.length - 40; i++) {
+            var transformedFrom = new Vector4();
+            transformedFrom.copy(this.v[this.e[i][0]]);
+            transformMatrix.transform(this.v[this.e[i][0]], transformedFrom);
+
+            var transformedTo = new Vector4();
+            transformedTo.copy(this.v[this.e[i][1]]);
+            transformMatrix.transform(this.v[this.e[i][1]], transformedTo);
+
+            g.moveTo(transformedFrom.x + xOff, transformedFrom.y + yOff);
+            g.lineTo(transformedTo.x + xOff, transformedTo.y + yOff);
+        }
+        g.stroke();
+
+        g.strokeStyle = 'black';
+        g.beginPath();
+        for (var i = this.e.length - 40; i < this.e.length; i++) {
+            var transformedFrom = new Vector4();
+            transformedFrom.copy(this.v[this.e[i][0]]);
+            transformMatrix.transform(this.v[this.e[i][0]], transformedFrom);
+
+            var transformedTo = new Vector4();
+            transformedTo.copy(this.v[this.e[i][1]]);
+            transformMatrix.transform(this.v[this.e[i][1]], transformedTo);
+
+            g.moveTo(transformedFrom.x + xOff, transformedFrom.y + yOff);
+            g.lineTo(transformedTo.x + xOff, transformedTo.y + yOff);
+        }
+        g.stroke();
+    }
+}
+
+/* ==================================================
+Cylinder
 ================================================== */
 function cylinder() {
     this.v = [];
     this.e = [];
+
+    var vertexEnum = 0;
+    for (var i = 0; i < 20; i++) {
+        for (var step = 0; step < 20; step++) {
+            var u = 1 / 20 * step;
+            var v = 1 / 20 * i;
+            var theta = 2 * Math.PI * u;
+
+            this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
+            this.v[vertexEnum].x = Math.sin(theta);
+            this.v[vertexEnum].y = 2 * v - 1;
+            this.v[vertexEnum].z = Math.cos(theta);
+            vertexEnum++;
+        }
+    }
+    this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
+    this.v[vertexEnum].x = 0;
+    this.v[vertexEnum].y = -1;
+    this.v[vertexEnum].z = 0;
+    vertexEnum++;
+
+    this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
+    this.v[vertexEnum].x = 0;
+    this.v[vertexEnum].y = 2 * ((1 / 20) * 19) - 1;
+    this.v[vertexEnum].z = 0;
+    vertexEnum++;
+
+    var edgeEnum = 0;
+    for (var i = 0; i < 20; i++) {
+        for (var step = 0; step < 20; step++) {
+            // Horizontal edges
+            if (step < 19) {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = step + 1 + (i * 20);
+                edgeEnum++;
+            }
+            else {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = (i * 20);
+                edgeEnum++;    
+            }
+            // Vertical edges
+            if (i == 0) {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = this.v.length - 2;
+                edgeEnum++;
+            }
+            if (i < 19) {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = step + 20 + (i * 20);
+                edgeEnum++;
+            }
+            else {
+                this.e[edgeEnum] = [];
+                this.e[edgeEnum][0] = step + (i * 20);
+                this.e[edgeEnum][1] = this.v.length - 1;
+                edgeEnum++;
+            }
+        }
+    }
 }
 cylinder.prototype = {
-    init: function (vNum) {
-        var vertexEnum = 0;
-        for (var i = 0; i < 20; i++) {
-            for (var step = 0; step < 20; step++) {
-                var u = 1 / 20 * step;
-                var v = 1 / 20 * i;
-                var theta = 2 * Math.PI * u;
-
-                this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
-                this.v[vertexEnum].x = Math.sin(theta);
-                this.v[vertexEnum].y = 2 * v - 1;
-                this.v[vertexEnum].z = Math.cos(theta);
-                vertexEnum++;
-            }
-        }
-
-        var edgeEnum = 0;
-        for (var i = 0; i < 20; i++) {
-            for (var step = 0; step < 20; step++) {
-                // Horizontal edges
-                if (step < 19) {
-                    this.e[edgeEnum] = [];
-                    this.e[edgeEnum][0] = step + (i * 20);
-                    this.e[edgeEnum][1] = step + 1 + (i * 20);
-                    edgeEnum++;
-                }
-                else {
-                    this.e[edgeEnum] = [];
-                    this.e[edgeEnum][0] = step + (i * 20);
-                    this.e[edgeEnum][1] = (i * 20);
-                    edgeEnum++;
-                }
-                // Vertical edges
-                if (i < 19) {
-                    this.e[edgeEnum] = [];
-                    this.e[edgeEnum][0] = step + (i * 20);
-                    this.e[edgeEnum][1] = step + 20 + (i * 20);
-                    edgeEnum++;
-                }
-            }
-        }
-    },
     init2: function (vNum) {
         var vertexEnum = 0;
         for (var i = 0; i < 20; i++) {
@@ -440,13 +600,6 @@ cylinder.prototype = {
                 this.v[vertexEnum].y = 2 * v - 1;
                 this.v[vertexEnum].z = Math.cos(theta);
                 vertexEnum++;
-
-                /*
-                this.v[vertexEnum] = new Vector4(0, 0, 0, 1);
-                this.v[vertexEnum].x = Math.random();
-                this.v[vertexEnum].y = Math.random();
-                this.v[vertexEnum].z = Math.random();
-                vertexEnum++;*/
             }
         }
 
@@ -512,6 +665,15 @@ function cube() {
         this.v[i] = new Vector4(0, 0, 0, 1);
     }
 
+    this.v[0] = new Vector4(-1, -1, -1, 1);
+    this.v[1] = new Vector4(1, -1, -1, 1);
+    this.v[2] = new Vector4(-1, 1, -1, 1);
+    this.v[3] = new Vector4(1, 1, -1, 1);
+    this.v[4] = new Vector4(-1, -1, 1, 1);
+    this.v[5] = new Vector4(1, -1, 1, 1);
+    this.v[6] = new Vector4(-1, 1, 1, 1);
+    this.v[7] = new Vector4(1, 1, 1, 1);
+
     this.e = [];
     this.e[0] = [0, 1];
     this.e[1] = [0, 2];
@@ -564,6 +726,82 @@ function train() {
     for (var i = 0; i < 64; i++) {
         this.v[i] = new Vector4(0, 0, 0, 1);
     }
+
+    // Car 1
+    this.v[0] = new Vector4(.55, 0, -.15, 1);
+    this.v[1] = new Vector4(.85, 0, -.15, 1);
+    this.v[2] = new Vector4(.55, .35, -.15, 1);
+    this.v[3] = new Vector4(.85, .25, -.15, 1);
+    this.v[4] = new Vector4(.55, 0, .15, 1);
+    this.v[5] = new Vector4(.85, 0, .15, 1);
+    this.v[6] = new Vector4(.55, .35, .15, 1);
+    this.v[7] = new Vector4(.85, .25, .15, 1);
+    // Car 2
+    this.v[8] = new Vector4(-.05, 0, -.20, 1);
+    this.v[9] = new Vector4(.5, 0, -.20, 1);
+    this.v[10] = new Vector4(-.05, .45, -.20, 1);
+    this.v[11] = new Vector4(.5, .45, -.20, 1);
+    this.v[12] = new Vector4(-.05, 0, .20, 1);
+    this.v[13] = new Vector4(.5, 0, .20, 1);
+    this.v[14] = new Vector4(-.05, .45, .20, 1);
+    this.v[15] = new Vector4(.5, .45, .20, 1);
+    // Car 3
+    this.v[16] = new Vector4(-.75, 0, -.20, 1);
+    this.v[17] = new Vector4(-.1, 0, -.20, 1);
+    this.v[18] = new Vector4(-.75, .45, -.20, 1);
+    this.v[19] = new Vector4(-.1, .45, -.20, 1);
+    this.v[20] = new Vector4(-.75, 0, .20, 1);
+    this.v[21] = new Vector4(-.1, 0, .20, 1);
+    this.v[22] = new Vector4(-.75, .45, .20, 1);
+    this.v[23] = new Vector4(-.1, .45, .20, 1);
+    // Connect 1
+    this.v[24] = new Vector4(.5, 0, -.05, 1);
+    this.v[25] = new Vector4(.55, 0, -.05, 1);
+    this.v[26] = new Vector4(.5, 0, .05, 1);
+    this.v[27] = new Vector4(.55, 0, .05, 1);
+    // Connect 2
+    this.v[28] = new Vector4(-.1, 0, -.05, 1);
+    this.v[29] = new Vector4(-.05, 0, -.05, 1);
+    this.v[30] = new Vector4(-.1, 0, .05, 1);
+    this.v[31] = new Vector4(-.05, 0, .05, 1);
+    // Car 1 Door
+    this.v[32] = new Vector4(.6, .01, .15, 1);
+    this.v[33] = new Vector4(.7, .01, .15, 1);
+    this.v[34] = new Vector4(.6, .2, .15, 1);
+    this.v[35] = new Vector4(.7, .2, .15, 1);
+    // Car 2 Door
+    this.v[36] = new Vector4(.35, .01, .20, 1);
+    this.v[37] = new Vector4(.45, .01, .20, 1);
+    this.v[38] = new Vector4(.35, .2, .20, 1);
+    this.v[39] = new Vector4(.45, .2, .20, 1);
+    // Car 3 Door
+    this.v[40] = new Vector4(-.25, .01, .20, 1);
+    this.v[41] = new Vector4(-.15, .01, .20, 1);
+    this.v[42] = new Vector4(-.25, .2, .20, 1);
+    this.v[43] = new Vector4(-.15, .2, .20, 1);
+    // Car 1 Window
+    this.v[44] = new Vector4(.85, .1, -.12, 1);
+    this.v[45] = new Vector4(.85, .2, -.12, 1);
+    this.v[46] = new Vector4(.85, .1, .12, 1);
+    this.v[47] = new Vector4(.85, .2, .12, 1);
+    // Car 2 Windows
+    this.v[48] = new Vector4(0, .1, -.20, 1);
+    this.v[49] = new Vector4(.3, .1, -.20, 1);
+    this.v[50] = new Vector4(0, .2, -.20, 1);
+    this.v[51] = new Vector4(.3, .2, -.20, 1);
+    this.v[52] = new Vector4(0, .1, .20, 1);
+    this.v[53] = new Vector4(.3, .1, .20, 1);
+    this.v[54] = new Vector4(0, .2, .20, 1);
+    this.v[55] = new Vector4(.3, .2, .20, 1);
+    // Car 3 Back Doors
+    this.v[56] = new Vector4(-.75, .01, -.17, 1);
+    this.v[57] = new Vector4(-.75, .4, -.17, 1);
+    this.v[58] = new Vector4(-.75, .01, 0, 1);
+    this.v[59] = new Vector4(-.75, .4, 0, 1);
+    this.v[60] = new Vector4(-.75, .01, .17, 1);
+    this.v[61] = new Vector4(-.75, .4, .17, 1);
+    this.v[62] = new Vector4(-.75, .01, 0, 1);
+    this.v[63] = new Vector4(-.75, .4, 0, 1);
 
     this.e = [
         // Car 1
@@ -705,8 +943,6 @@ train.prototype = {
             g.lineTo(transformedTo.x + xOff, transformedTo.y + yOff);
         }
         g.stroke();
-        
-
     },
     makeCopy: function () {
         var copy = new train();
@@ -714,7 +950,7 @@ train.prototype = {
             copy.v[i].copy(this.v[i]);
         }
         return copy;
-    }
+    },
 }
 
 
