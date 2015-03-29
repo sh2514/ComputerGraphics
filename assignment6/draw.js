@@ -25,7 +25,7 @@ function drawDrawings() {
     drawOnCanvas3();
     drawOnCanvas4();
     drawOnCanvas5();
-    //drawOnCanvas6();
+    drawOnCanvas6();
 }
 
 function drawOnCanvas1() {
@@ -206,45 +206,143 @@ function drawOnCanvas5() {
 function drawOnCanvas6() {
     var canvas = initCanvas('canvas6');
     canvas.update = function (g) {
-        var bomb = new sphere();
-        var top = new sphere();
+        var neck = new Vector4(0, .55, 0, 1);
+        var bodyTop = new Vector4(0, .35, 0, 1);
+        var bodyBot = new Vector4(0, .05, 0, 1);
+        var lElbow = new Vector4(-.05, -.2, .05, 1);
+        var rElbow = new Vector4(.05, -.2, -.05, 1);
+        var lKnee = new Vector4(-.05, -.35, .1, 1);
+        var rKnee = new Vector4(.05, -.35, -.1, 1);
+        var lFoot = new Vector4(-.05, -.8, .1, 1);
+        var rFoot = new Vector4(.05, -.8, -.1, 1);
 
-        var animate = new matrix();
         var perspectiveMatrix = new matrix();
+        perspectiveMatrix.perspective(-2.4);
+        var transformMatrix = new matrix(canvas.width, canvas.height);
+        var transformMatrixLLeg = new matrix();
+        var transformMatrixRLeg = new matrix();
+        var transformMatrixLArm = new matrix();
+        var transformMatrixRArm = new matrix();
+        var converted = new Vector4();
 
-        if (!this.cursor.z) {
-            animate.rotateY(Math.PI);
-            animate.rotateX(this.cursor.y / 100);
-            animate.rotateY(this.cursor.x / 100);
-            animate.rotateZ(-this.cursor.x / 100);
-            perspectiveMatrix.perspective(-2.4);
-        }
-        else {
-            animate.translate(0, Math.abs(Math.sin(time)), -Math.abs(Math.cos(time) * 10) + 2);
-            animate.rotateX(Math.sin(time));
-            animate.rotateY(Math.tan(time));
+        g.strokeStyle = 'white';
+        g.lineWidth = 10;
+        g.lineCap = "round";
+        g.beginPath();
 
-            perspectiveMatrix.perspective(-2.4);
-        }
+        // Start at neck
+        //transformMatrix.rotateX(Math.abs(Math.sin(time)));
+        transformMatrix.translate(Math.sin(time) / 50, 0, 0);        
+        neck = transformMatrix.dot(neck);
+        neck = perspectiveMatrix.dot(neck);
+        neck.x = -2.4 * neck.x / neck.z;
+        neck.y = -2.4 * neck.y / neck.z;
+        neck.z = -2.4 / neck.z;
+        converted.copy(neck);
+        transformMatrix.transform(neck, converted);
+        g.moveTo(converted.x, converted.y);
 
+        // Draw to bodyTop
+        transformMatrix.translate(0, 0, Math.sin(time) / 50);
+        bodyTop = transformMatrix.dot(bodyTop);
+        bodyTop = perspectiveMatrix.dot(bodyTop);
+        bodyTop.x = -2.4 * bodyTop.x / bodyTop.z;
+        bodyTop.y = -2.4 * bodyTop.y / bodyTop.z;
+        bodyTop.z = -2.4 / bodyTop.z;
+        converted.copy(bodyTop);
+        transformMatrix.transform(bodyTop, converted);
+        g.lineTo(converted.x, converted.y);
 
-        for (var i = 0; i < bomb.v.length; i++) {
-            bomb.v[i] = animate.dot(bomb.v[i]);
-            top.v[i] = animate.dot(bomb.v[i]);
+        // Draw to bodyBot
+        transformMatrix.translate(0, 0, -Math.sin(time) / 50);
+        bodyBot = transformMatrix.dot(bodyBot);
+        bodyBot = perspectiveMatrix.dot(bodyBot);
+        bodyBot.x = -2.4 * bodyBot.x / bodyBot.z;
+        bodyBot.y = -2.4 * bodyBot.y / bodyBot.z;
+        bodyBot.z = -2.4 / bodyBot.z;
+        converted.copy(bodyBot);
+        transformMatrix.transform(bodyBot, converted);
+        g.lineTo(converted.x, converted.y);
 
-            bomb.v[i] = perspectiveMatrix.dot(bomb.v[i]);
-            bomb.v[i].x = -2.4 * bomb.v[i].x / bomb.v[i].z;
-            bomb.v[i].y = -2.4 * bomb.v[i].y / bomb.v[i].z;
-            bomb.v[i].z = -2.4 / bomb.v[i].z;
+        // Draw to lKnee
+        transformMatrixLLeg.rotateZ(Math.sin(time) / 1.5);
+        lKnee = transformMatrixLLeg.dot(lKnee);
+        lKnee = perspectiveMatrix.dot(lKnee);
+        lKnee.x = -2.4 * lKnee.x / lKnee.z;
+        lKnee.y = -2.4 * lKnee.y / lKnee.z;
+        lKnee.z = -2.4 / lKnee.z;
+        converted.copy(lKnee);
+        transformMatrix.transform(lKnee, converted);
+        g.lineTo(converted.x, converted.y);
 
-            top.v[i] = perspectiveMatrix.dot(top.v[i]);
-            top.v[i].x = -2.4 * top.v[i].x / top.v[i].z;
-            top.v[i].y = -2.4 * top.v[i].y / top.v[i].z;
-            top.v[i].z = -2.4 / top.v[i].z;
-        }
+        // Draw to lFoot
+        transformMatrixLLeg.rotateZ(-Math.abs(Math.cos(time) / 3.5) - .1);
+        lFoot = transformMatrixLLeg.dot(lFoot);
+        lFoot = perspectiveMatrix.dot(lFoot);
+        lFoot.x = -2.4 * lFoot.x / lFoot.z;
+        lFoot.y = -2.4 * lFoot.y / lFoot.z;
+        lFoot.z = -2.4 / lFoot.z;
+        converted.copy(lFoot);
+        transformMatrix.transform(lFoot, converted);
+        g.lineTo(converted.x, converted.y);
 
-        bomb.draw(g, 200, 200, .3 * canvas.width, .3 * canvas.height);
-        top.draw(g, 250, 170, .1 * canvas.width, .1 * canvas.height);
+        // Move back and draw to rKnee
+        transformMatrixRLeg.rotateZ(-Math.sin(time) / 1.5);
+        rKnee = transformMatrixRLeg.dot(rKnee);
+        rKnee = perspectiveMatrix.dot(rKnee);
+        rKnee.x = -2.4 * rKnee.x / rKnee.z;
+        rKnee.y = -2.4 * rKnee.y / rKnee.z;
+        rKnee.z = -2.4 / rKnee.z;
+        converted.copy(bodyBot);
+        transformMatrix.transform(bodyBot, converted);
+        g.moveTo(converted.x, converted.y);
+        converted.copy(rKnee);
+        transformMatrix.transform(rKnee, converted);
+        g.lineTo(converted.x, converted.y);
+
+        // Draw rFoot
+        transformMatrixRLeg.rotateZ(-Math.abs(Math.cos(time) / 1.5) - .1);
+        rFoot = transformMatrixRLeg.dot(rFoot);
+        rFoot = perspectiveMatrix.dot(rFoot);
+        rFoot.x = -2.4 * rFoot.x / rFoot.z;
+        rFoot.y = -2.4 * rFoot.y / rFoot.z;
+        rFoot.z = -2.4 / rFoot.z;
+        g.moveTo(converted.x, converted.y);
+        converted.copy(rFoot);
+        transformMatrix.transform(rFoot, converted);
+        g.lineTo(converted.x, converted.y);
+
+        // Move back and draw to lElbow
+        transformMatrixLArm.rotateX(Math.cos(time + 100) * 2);
+        transformMatrixLArm.rotateZ(Math.sin(time) / 2);
+        lElbow = transformMatrixLArm.dot(lElbow);
+        lElbow = perspectiveMatrix.dot(lElbow);
+        lElbow.x = -2.4 * lElbow.x / lElbow.z;
+        lElbow.y = -2.4 * lElbow.y / lElbow.z;
+        lElbow.z = -2.4 / lElbow.z;
+        converted.copy(bodyTop);
+        transformMatrix.transform(bodyTop, converted);
+        g.moveTo(converted.x, converted.y);
+        converted.copy(lElbow);
+        transformMatrix.transform(lElbow, converted);
+        g.lineTo(converted.x, converted.y);
+
+        // Move back and draw to rElbow
+        transformMatrixRArm.rotateX(-Math.cos(time + 100) * 3);
+        transformMatrixRArm.rotateZ(-Math.sin(time) / 2);
+        rElbow = transformMatrixRArm.dot(rElbow);
+        rElbow = perspectiveMatrix.dot(rElbow);
+        rElbow.x = -2.4 * rElbow.x / rElbow.z;
+        rElbow.y = -2.4 * rElbow.y / rElbow.z;
+        rElbow.z = -2.4 / rElbow.z;
+        converted.copy(bodyTop);
+        transformMatrix.transform(bodyTop, converted);
+        g.moveTo(converted.x, converted.y);
+        converted.copy(rElbow);
+        transformMatrix.transform(rElbow, converted);
+        g.lineTo(converted.x, converted.y);
+
+        g.stroke();
     }
 }
 
@@ -953,6 +1051,4 @@ train.prototype = {
     },
 }
 
-
 loadScript('drawlib1.js', drawDrawings);
-
