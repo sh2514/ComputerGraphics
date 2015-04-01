@@ -21,6 +21,7 @@ function loadScript(url, callback) {
 
 function drawDrawings() {
     drawOnEditorCanvas();
+    drawPictureOnCanvas();
     /*drawOnCanvasA();
     drawOnCanvasB();
     drawOnCanvas1();
@@ -33,6 +34,153 @@ function drawDrawings() {
 
 var splineEnum = 0;
 var splines = [];
+
+function drawPictureOnCanvas() {
+    var canvas = initCanvas('editorCanvas');
+
+        var sx = 0;
+        var sy = 0;
+        var ex = 0;
+        var ey = 0;
+        var sxr = 0;
+        var syr = 0;
+        var exr = 0;
+        var eyr = 0;
+        var c = 'black';
+
+        /*sx = 0;
+        sy = 0;
+        ex = .5;
+        ey = .5;
+        sxr = 1;
+        syr = 1;
+        exr = 1;
+        eyr = 1;
+        c = 'red';*/
+
+        /*
+        sx = 
+        sy = 
+        ex = 
+        ey = 
+        sxr = 
+        syr = 
+        exr = 
+        eyr = 
+        c = 
+        */
+
+        sx = 0
+        sy = 0
+        prevex = (Math.random() - .5) * 2;
+        prevey = (Math.random() - .5) * 2;
+        sxr = (Math.random() - .5) * 2;
+        syr = (Math.random() - .5) * 2;
+        prevexr = (Math.random() - .5) * 2;
+        preveyr = (Math.random() - .5) * 2;
+        for (var i = 0; i < 5000; i++) {
+            sx = prevex;
+            sy = prevey;
+            ex = (Math.random() - .5) * 2;
+            ey = (Math.random() - .5) * 2;
+            sxr = prevexr;
+            syr = preveyr;
+            exr = (Math.random() - .5) * 2;
+            eyr = (Math.random() - .5) * 2;
+            c = getRandomColor();
+            prevex = ex;
+            prevey = ey;
+            prevexr = exr;
+            preveyr = eyr;
+
+            addSplineToCanvas(sx, sy, ex, ey, sxr, syr, exr, eyr, c);
+        }
+
+
+}
+
+function addSplineToCanvas(sx, sy, ex, ey, sxr, syr, exr, eyr, c) {
+    var newSpline = {
+        splineID: '', startX: 0, startY: 0, endX: 0, endY: 0,
+        startXR: 0, startYR: 0, endXR: 0, endYR: 0, splineColor: 'black'
+    };
+
+    var startX = sx;
+    var startY = sy;
+    var endX = ex;
+    var endY = ey;
+    var startXR = sxr;
+    var startYR = syr;
+    var endXR = exr;
+    var endYR = eyr;
+    var splineColor = c;
+
+    if (startX !== "" && startY !== "" && endX !== "" && endY !== "" &&
+        startXR !== "" && startYR !== "" && endXR !== "" && endYR !== "") {
+        newSpline.splineID = 's' + splineEnum;
+        newSpline.startX = startX;
+        newSpline.startY = startY;
+        newSpline.endX = endX;
+        newSpline.endY = endY;
+        newSpline.startXR = startXR;
+        newSpline.startYR = startYR;
+        newSpline.endXR = endXR;
+        newSpline.endYR = endYR;
+        newSpline.splineColor = splineColor;
+
+        splines[splineEnum] = newSpline;
+        splineEnum++;
+
+        document.getElementById('successIndicator').style.color = 'lightgreen';
+        document.getElementById('successIndicator').innerHTML = "Spline " + splines[splineEnum - 1].splineID + " successfully added!";
+
+        var newSplineDiv = document.createElement('div');
+        newSplineDiv.id = newSpline.splineID;
+        newSplineDiv.style.font.size = '10';
+        newSplineDiv.style.fontWeight = 'normal';
+
+        var newText = document.createTextNode("Spline: " + newSpline.splineID + ", ");
+        newSplineDiv.appendChild(newText);
+        newText = document.createTextNode("startX: " + newSpline.startX + ", ");
+        newSplineDiv.appendChild(newText);
+        newText = document.createTextNode("startY: " + newSpline.startY + ", ");
+        newSplineDiv.appendChild(newText);
+        newText = document.createTextNode("endX: " + newSpline.endX + ", ");
+        newSplineDiv.appendChild(newText);
+        newText = document.createTextNode("endY: " + newSpline.endY + ", ");
+        newSplineDiv.appendChild(newText);
+        newText = document.createTextNode("startXr: " + newSpline.startXR + ", ");
+        newSplineDiv.appendChild(newText);
+        newText = document.createTextNode("startYr: " + newSpline.startYR + ", ");
+        newSplineDiv.appendChild(newText);
+        newText = document.createTextNode("endXr: " + newSpline.endXR + ", ");
+        newSplineDiv.appendChild(newText);
+        newText = document.createTextNode("endYr: " + newSpline.endYR + ", ");
+        newSplineDiv.appendChild(newText);
+        newText = document.createTextNode("color: " + newSpline.splineColor + " ");
+        newSplineDiv.appendChild(newText);
+
+        var newEditButton = document.createElement('button');
+        newEditButton.innerHTML = 'Edit';
+        newEditButton.value = newSpline.splineID;
+        newEditButton.onclick = function () { editSpline(this.value) };
+        newSplineDiv.appendChild(newEditButton);
+
+        var newDeleteButton = document.createElement('button');
+        newDeleteButton.innerHTML = 'Delete';
+        newDeleteButton.value = newSpline.splineID;
+        newDeleteButton.onclick = function () { deleteSpline(this.value) };
+        newSplineDiv.appendChild(newDeleteButton);
+
+        var canvasTable = document.getElementById('listOfSplinesHeader');
+        canvasTable.appendChild(newSplineDiv);
+    }
+    else {
+        document.getElementById('successIndicator').style.color = 'red';
+        document.getElementById('successIndicator').innerHTML = "Add spline failed!  Check spline parameters!";
+    }
+}
+
 function updateEditorCanvas() {
     var newSpline = {
         splineID: '', startX: 0, startY: 0, endX: 0, endY: 0,
@@ -1478,6 +1626,16 @@ train.prototype = {
         }
         return copy;
     },
+}
+
+// http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
 loadScript('drawlib1.js', drawDrawings);
