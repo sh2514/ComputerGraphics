@@ -2,9 +2,9 @@
 Shikuan Huang
 Professor Kenneth Perlin
 Computer Graphics
-25, March 2015
+1, April 2015
 
-Assignment 6
+Assignment 7
 */
 
 function loadScript(url, callback) {
