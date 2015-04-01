@@ -1,0 +1,43 @@
+<!--
+Shikuan Huang
+Professor Kenneth Perlin
+Computer Graphics
+25, March 2015
+
+Assignment 6
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Shikuan Huang - Computer Graphics Assignment 6</title>
+
+    <script src="draw.js"></script>
+</head>
+<body style="background-color:cornflowerblue">
+    <h3>Shikuan Huang - Computer Graphics Assignment 6</h3>
+    <hr />
+
+    <table>
+        <tr>
+            <td>
+                <canvas id="editorCanvas" width="600" height="600"></canvas>
+            </td>
+            <td>
+                <h4>Add a new spline:</h4>
+                <p><input type="number" id="startX" /> Start point x </p>
+                <p><input type="number" id="startY" /> Start point y </p>
+                <p><input type="number" id="endX" /> End point x </p>
+                <p><input type="number" id="endY" /> End point y </p>
+                <p><input type="number" id="startXR" /> Start point x r </p>
+                <p><input type="number" id="startYR" /> Start point y r </p>
+                <p><input type="number" id="endXR" /> End point x r </p>
+                <p><input type="number" id="endYR" /> End point y r </p>
+                <p><input type="color" id="splineColor" /> color </p></p>
+                <button onclick="updateEditorCanvas()">Add spline</button>
+                <p id="successIndicator" style="color:red;"></p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

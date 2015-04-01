@@ -20,14 +20,53 @@ function loadScript(url, callback) {
 }
 
 function drawDrawings() {
-    drawOnCanvasA();
+    drawOnEditorCanvas();
+    /*drawOnCanvasA();
     drawOnCanvasB();
-    /*drawOnCanvas1();
+    drawOnCanvas1();
     drawOnCanvas2();
     drawOnCanvas3();
     drawOnCanvas4();
     drawOnCanvas5();
     drawOnCanvas6();*/
+}
+
+var splineEnum = 0;
+var splines = [];
+function updateEditorCanvas() {
+    var newSpline = {
+        startX: 0, startY: 0, endX: 0, endY: 0,
+        startXR: 0, startYR: 0, endXR: 0, endYR: 0, splineColor: 'black'
+    };
+
+    var startX = document.getElementById('startX').value;
+    var startY = document.getElementById('startY').value;
+    var endX = document.getElementById('endX').value;
+    var endY = document.getElementById('endY').value;
+    var startXR = document.getElementById('startXR').value;
+    var startYR = document.getElementById('startYR').value;
+    var endXR = document.getElementById('endXR').value;
+    var endYR = document.getElementById('endYR').value;
+    var splineColor = document.getElementById('splineColor').value;
+
+    if (startX !== "" && startY !== "" && endX !== "" && endY !== "" &&
+        startXR !== "" && startYR !== "" && endXR !== "" && endYR !== "") {
+        newSpline.startX = startX;
+        newSpline.startY = startY;
+        newSpline.endX = endX;
+        newSpline.endY = endY;
+        newSpline.startXR = startXR;
+        newSpline.startYR = startYR;
+        newSpline.endXR = endXR;
+        newSpline.endYR = endYR;
+        newSpline.splineColor = splineColor;
+
+        splines[splineEnum] = newSpline;
+        splineEnum++;
+    }
+    else {
+        document.getElementById('successIndicator').innerHTML = "Add spline failed!  Check spline parameters!"
+    }
 }
 
 function drawOnCanvasA() {
@@ -38,6 +77,7 @@ function drawOnCanvasA() {
 
         var transformMatrix = new matrix(canvas.width, canvas.height);
 
+
         var xModifiers = new Vector4();
         xModifiers.x = -.5;
         xModifiers.y = .8;
@@ -45,25 +85,33 @@ function drawOnCanvasA() {
         xModifiers.w = 2;
 
         var yModifiers = new Vector4();
-        yModifiers.x = .5;
+        yModifiers.x = Math.sin(time);
         yModifiers.y = .5;
         yModifiers.z = 2;
         yModifiers.w = 1;
 
-        g.moveTo(hermite(xModifiers, 0), hermite(yModifiers, 0));
+        if (this.cursor.z) {
+            xModifiers.x = (this.cursor.x - (canvas.width / 2)) / canvas.width * 2;
+            yModifiers.x = -(this.cursor.y - (canvas.width / 2)) / canvas.width * 2;
+        }
+
         for (var t = 0.00; t <= 1.0; t += 0.01) {
             var original = new Vector4();
             original.x = hermite(xModifiers, t);
             original.y = hermite(yModifiers, t);
             original.z = 0;
             original.w = 1;
+
             var transformedTo = new Vector4();
             transformedTo.copy(original);
             transformMatrix.transform(original, transformedTo);
-
-            g.lineTo(transformedTo.x, transformedTo.y);
+            if (t === 0.00) {
+                g.moveTo(transformedTo.x, transformedTo.y);
+            }
+            else {
+                g.lineTo(transformedTo.x, transformedTo.y);
+            }
         }
-
         g.stroke();
     }
 }
@@ -77,7 +125,7 @@ function drawOnCanvasB() {
         var transformMatrix = new matrix(canvas.width, canvas.height);
 
         var xModifiers = new Vector4();
-        xModifiers.x = -.5;
+        xModifiers.x = Math.sin(time);
         xModifiers.y = -.6;
         xModifiers.z = .4;
         xModifiers.w = .6;
@@ -87,6 +135,11 @@ function drawOnCanvasB() {
         yModifiers.y = -.6;
         yModifiers.z = -.4;
         yModifiers.w = .7;
+
+        if (this.cursor.z) {
+            xModifiers.x = (this.cursor.x - (canvas.width / 2)) / canvas.width * 2;
+            yModifiers.x = -(this.cursor.y - (canvas.width / 2)) / canvas.width * 2;
+        }
 
         g.moveTo(bezier(xModifiers, 0), bezier(yModifiers, 0));
         for (var t = 0.00; t <= 1.0; t += 0.01) {
@@ -99,10 +152,70 @@ function drawOnCanvasB() {
             transformedTo.copy(original);
             transformMatrix.transform(original, transformedTo);
 
-            g.lineTo(transformedTo.x, transformedTo.y);
+            if (t === 0.00) {
+                g.moveTo(transformedTo.x, transformedTo.y);
+            }
+            else {
+                g.lineTo(transformedTo.x, transformedTo.y);
+            }
+
         }
 
         g.stroke();
+    }
+}
+
+function drawOnEditorCanvas() {
+    var canvas = initCanvas('editorCanvas');
+    canvas.update = function (g) {
+        // Draw canvas frame
+        g.strokeStyle = 'gold';
+        g.beginPath();
+        g.moveTo(0, 0);
+        g.lineTo(canvas.width, 0);
+        g.lineTo(canvas.width, canvas.height);
+        g.lineTo(0, canvas.height);
+        g.lineTo(0, 0);
+        g.stroke();
+
+        var transformMatrix = new matrix(canvas.width, canvas.height);
+
+        for (var i = 0; i < splines.length; i++) {
+            g.beginPath();
+            g.strokeStyle = splines[i].splineColor;
+
+            var xModifiers = new Vector4();
+            xModifiers.x = splines[i].startX;
+            xModifiers.y = splines[i].endX;
+            xModifiers.z = splines[i].startXR;
+            xModifiers.w = splines[i].endXR;
+
+            var yModifiers = new Vector4();
+            yModifiers.x = splines[i].startY;
+            yModifiers.y = splines[i].endY;
+            yModifiers.z = splines[i].endYR;
+            yModifiers.w = splines[i].endYR;
+
+            for (var t = 0.00; t < 1.0; t += 0.01) {
+                var original = new Vector4();
+                original.x = hermite(xModifiers, t);
+                original.y = hermite(yModifiers, t);
+                original.z = 0;
+                original.w = 1;
+
+                var transformedTo = new Vector4();
+                transformedTo.copy(original);
+                transformMatrix.transform(original, transformedTo);
+                if (t === 0.00) {
+                    g.moveTo(transformedTo.x, transformedTo.y);
+                }
+                else {
+                    g.lineTo(transformedTo.x, transformedTo.y);
+                }
+
+            }
+            g.stroke();
+        }
     }
 }
 
@@ -122,9 +235,7 @@ function hermite(arg, t) {
     return sum;
 }
 
-/* ==================================================
-Content from previous homeworks
-================================================== */
+
 
 function drawOnCanvas1() {
     var canvas = initCanvas('canvas1');
@@ -226,7 +337,7 @@ function drawOnCanvas3() {
             frameCopy.v[i].z = -2.4 / frameCopy.v[i].z;
         }
 
-        frameCopy.draw(g, 100, 100, .5 * canvas.width, .5 * canvas.height);
+        frameCopy.drawWithSplines(g, 100, 100, .5 * canvas.width, .5 * canvas.height, time);
     }
 }
 
@@ -253,7 +364,7 @@ function drawOnCanvas4() {
             frameCopy.v[i].z = -2.4 / frameCopy.v[i].z;
         }
 
-        frameCopy.draw(g, 100, 100, .5 * canvas.width, .5 * canvas.height);
+        frameCopy.drawWithSplines(g, 100, 100, .5 * canvas.width, .5 * canvas.height, time);
     }
 }
 
@@ -843,6 +954,49 @@ cylinder.prototype = {
 
             g.moveTo(transformedFrom.x + xOff, transformedFrom.y + yOff);
             g.lineTo(transformedTo.x + xOff, transformedTo.y + yOff);
+        }
+        g.stroke();
+    },
+    drawWithSplines: function (g, xOff, yOff, width, height, time) {
+        var transformMatrix = new matrix(width, height);
+        g.strokeStyle = 'snow';
+        g.beginPath();
+
+        for (var i = 0; i < this.e.length; i++) {
+            var transformedFrom = new Vector4();
+            transformedFrom.copy(this.v[this.e[i][0]]);
+            transformMatrix.transform(this.v[this.e[i][0]], transformedFrom);
+            g.moveTo(transformedFrom.x + xOff, transformedFrom.y + yOff);          
+
+            var xModifiers = new Vector4();
+            xModifiers.x = this.v[this.e[i][0]].x;
+            xModifiers.y = this.v[this.e[i][1]].x;
+            xModifiers.z = Math.sin(time) * Math.sin(time);
+            xModifiers.w = Math.cos(time) * Math.sin(time);
+
+            var yModifiers = new Vector4();
+            yModifiers.x = this.v[this.e[i][0]].y;
+            yModifiers.y = this.v[this.e[i][1]].y;
+            yModifiers.z = Math.sin(time) * 2;
+            yModifiers.w = Math.cos(time) * Math.cos(time);
+
+            for (t = 0.00; t <= 1.0; t += 0.01) {
+                var original = new Vector4();
+                original.x = hermite(xModifiers, t);
+                original.y = hermite(yModifiers, t);
+                original.z = 0;
+                original.w = 1;
+
+                var transformedTo = new Vector4();
+                transformedTo.copy(original);
+                transformMatrix.transform(original, transformedTo);
+                if (t === 0.00) {
+                    g.moveTo(transformedTo.x + xOff, transformedTo.y + yOff);
+                }
+                else {
+                    g.lineTo(transformedTo.x + xOff, transformedTo.y + yOff);
+                }
+            }        
         }
         g.stroke();
     },
