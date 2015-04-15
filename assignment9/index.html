@@ -1,0 +1,326 @@
+<!--
+Shikuan Huang
+Professor Kenneth Perlin
+Computer Graphics
+15, April 2015
+
+Assignment 9
+
+References:
+    http://stackoverflow.com/questions/22689898/three-js-checkerboard-plane
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Shikuan Huang - Computer Graphics Assignment 9</title>
+</head>
+
+<body style="background-color:snow">
+    <h3>Shikuan Huang - Computer Graphics Assignment 9</h3>
+    <hr />
+
+    <script src=three.js></script>
+    <script>
+        window.time = 0;
+        window.SimpleScene = function () {
+            this.init = function (name) {
+                this.scene = new THREE.Scene();
+
+                // CREATE THE CAMERA, AND ATTACH IT TO THE SCENE.
+
+                var camera = new THREE.PerspectiveCamera(50, 1, 1, 10000);
+                camera.position.z = 10;
+                this.scene.add(camera);
+
+                // CREATE THE WEBGL RENDERER, AND ATTACH IT TO THE DOCUMENT BODY.
+
+                var renderer = new THREE.WebGLRenderer({ alpha: true });
+                renderer.setSize(600, 600);
+                document.getElementById(name).appendChild(renderer.domElement);
+
+                // CALL THE USER'S SETUP FUNCTION JUST ONCE.
+
+                this.setup();
+
+                // START THE ANIMATION LOOP.
+
+                var that = this;
+                (function tick() {
+                    time = (new Date().getTime()) / 1000;
+                    that.update();
+                    renderer.render(that.scene, camera);
+                    requestAnimationFrame(tick);
+                })();
+            }
+        };
+    </script>
+
+    <div id='myScene1_id'></div>
+    <script>
+        var screenW = 600;
+        var screenH = 600;
+        var mouseDown = false;
+        var mouseX = 0;
+        var mouseY = 0;
+        var spdX = 0;
+        var spdY = 0;
+
+        var inAir = false;
+        var currentXRotSpd = 0;
+        var currentYRotSpd = 0;
+        var xRotCount = 0;
+        var zRotCount = 0;
+        var startTime = 0;
+
+        function myScene1() {
+            var environment;
+            var light;
+            var box;
+            var box2;
+            var face1;
+            var face2 = [];
+            var face3 = [];
+            var face4 = [];
+            var face5 = [];
+            var face6 = [];
+            var joint;
+            var floor;
+            var floorMaterials = [];     
+
+            this.setup = function () {
+                document.addEventListener('mousemove', function (event) {
+                    mouseX = event.clientX;
+                    mouseY = event.clientY;
+                }, false);
+
+                document.addEventListener('mousedown', function (event) {
+                    mouseDown = true;
+                }, false);
+
+                document.addEventListener('mouseup', function (event) {
+                    mouseDown = false;
+                })
+
+                environment = new THREE.Mesh(new THREE.Geometry());
+                this.scene.add(environment);
+
+                light = new THREE.DirectionalLight(0xffffff);
+                light.position.set(1, 1, 1).normalize();
+                environment.add(light);
+
+                var geometry = new THREE.BoxGeometry(2, 2, 2);
+                //var material = new THREE.LineBasicMaterial({ color: 0xdddddd });
+                var redMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+                var blackMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+                var whiteMaterial = new THREE.LineBasicMaterial({ color: 0x050505 });
+                var material = new THREE.MeshPhongMaterial({
+                    ambient: 0,
+                    emisive: 0x000000,
+                    color: 0xeeeeee,
+                    specular: 0x101010,
+                    shininess: 400,
+                });
+
+                var bigCircleGeo = new THREE.CircleGeometry(.4, 32);
+                var smallCircleGeo = new THREE.CircleGeometry(.2, 32);
+
+                var floorGeo = new THREE.PlaneGeometry(9, 9, 10, 10);
+
+                floorMaterials.push(new THREE.MeshBasicMaterial({color:0xffffcc, side: THREE.DoubleSide}));
+                floorMaterials.push(new THREE.MeshBasicMaterial({color:0x200000, side: THREE.DoubleSide}));
+                var faceCount = 100 ;
+
+                for (var i = 0; i < faceCount; i++) {
+                    var j = i * 2;
+                    floorGeo.faces[j].materialIndex = ((i + Math.floor(i / 10)) % 2);
+                    floorGeo.faces[j + 1].materialIndex = ((i + Math.floor(i / 10)) % 2);
+                }
+                
+
+                box = new THREE.Mesh(geometry, material);
+                joint = new THREE.Mesh();
+                face1 = new THREE.Mesh(bigCircleGeo, redMaterial);
+                face2[0] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face2[1] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face3[0] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face3[1] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face3[2] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face4[0] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face4[1] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face4[2] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face4[3] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face5[0] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face5[1] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face5[2] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face5[3] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face5[4] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face6[0] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face6[1] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face6[2] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face6[3] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face6[4] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+                face6[5] = new THREE.Mesh(smallCircleGeo, blackMaterial);
+
+                environment.add(box);
+                box.add(joint);
+                joint.add(face1);
+                joint.add(face2[0]);
+                joint.add(face2[1]);
+                joint.add(face3[0]);
+                joint.add(face3[1]);
+                joint.add(face3[2]);
+                joint.add(face4[0]);
+                joint.add(face4[1]);
+                joint.add(face4[2]);
+                joint.add(face4[3]);
+                joint.add(face5[0]);
+                joint.add(face5[1]);
+                joint.add(face5[2]);
+                joint.add(face5[3]);
+                joint.add(face5[4]);
+                joint.add(face6[0]);
+                joint.add(face6[1]);
+                joint.add(face6[2]);
+                joint.add(face6[3]);
+                joint.add(face6[4]);
+                joint.add(face6[5]);
+
+                //plane = new THREE.Mesh(floorGeo, blackMaterial);
+                plane = new THREE.Mesh(floorGeo, new THREE.MeshFaceMaterial(floorMaterials));
+                plane.position.y = -2;
+                plane.position.z = 1;
+                plane.rotation.x = -Math.PI / 2.5;
+                plane.rotation.z = Math.PI / 4.5;
+
+                box.position.y = -.9;
+                box.position.z = 1;
+                box.rotation.x = -Math.PI / 2.5;
+                box.rotation.z = Math.PI / 4.5;
+
+                environment.add(plane);
+            }
+
+            this.update = function () {
+                if (!inAir && mouseDown) {
+                    inAir = true;
+                    box.rotation.x += Math.PI / 2.5;
+                    box.rotation.z += -Math.PI / 4.5;
+                    currentXRotSpd = Math.random() * .15 + .1;
+                    currentYRotSpd = Math.random() * .15 + .1;
+                    startTime = time;
+                }
+
+                if (inAir) {
+                    var randFactor = 1 + Math.floor(Math.random() * 4);
+                    box.rotation.x += 2 * Math.PI / 4 * randFactor;
+                    //box.rotation.z += 2 * Math.PI / 4 * randFactor;
+                    box.position.y = Math.abs(Math.sin((time - startTime) * 1.4) * 30) * Math.pow(.6, time - startTime) - .9;
+
+                    if (time - startTime > 6.7) {
+                        inAir = false;
+                        box.position.y = -.9;
+                    }
+                }
+
+                //box.rotation.x -= 0.02;
+                //box.rotation.y += 0.02;
+
+                spdX = (screenH / 2 - mouseX) / 2000;
+                spdY = (screenW / 2 - mouseY) / 2000;
+
+                environment.rotation.x = spdY;
+                environment.rotation.y = spdX;
+
+                face1.position.x = 1.0001;
+                face1.rotation.y = Math.PI / 2;
+                face2[0].position.x = -.4;
+                face2[0].position.y = .4;
+                face2[0].position.z = 1.0001;
+                face2[1].position.x = .4;
+                face2[1].position.y = -.4;
+                face2[1].position.z = 1.0001;
+
+                face3[0].position.x = -1.0001;
+                face3[0].position.y = -.55;
+                face3[0].position.z = -.55;
+                face3[0].rotation.y = -Math.PI / 2;
+                face3[1].position.x = -1.0001;
+                face3[1].position.y = 0;
+                face3[1].position.z = 0;
+                face3[1].rotation.y = -Math.PI / 2;
+                face3[2].position.x = -1.0001;
+                face3[2].position.y = .55;
+                face3[2].position.z = .55;
+                face3[2].rotation.y = -Math.PI / 2;
+
+                face4[0].position.x = -.4;
+                face4[0].position.y = -.4;
+                face4[0].position.z = -1.0001;
+                face4[0].rotation.y = Math.PI;
+                face4[1].position.x = .4;
+                face4[1].position.y = .4;
+                face4[1].position.z = -1.0001;
+                face4[1].rotation.y = Math.PI;
+                face4[2].position.x = .4;
+                face4[2].position.y = -.4;
+                face4[2].position.z = -1.0001;
+                face4[2].rotation.y = Math.PI;
+                face4[3].position.x = -.4;
+                face4[3].position.y = .4;
+                face4[3].position.z = -1.0001;
+                face4[3].rotation.y = Math.PI;
+
+                face5[0].position.x = 0;
+                face5[0].position.y = 1.0001;
+                face5[0].position.z = 0;
+                face5[0].rotation.x = -Math.PI / 2;
+                face5[1].position.x = -.55;
+                face5[1].position.y = 1.0001;
+                face5[1].position.z = -.55;
+                face5[1].rotation.x = -Math.PI / 2;
+                face5[2].position.x = .55;
+                face5[2].position.y = 1.0001;
+                face5[2].position.z = .55;
+                face5[2].rotation.x = -Math.PI / 2;
+                face5[3].position.x = .55;
+                face5[3].position.y = 1.0001;
+                face5[3].position.z = -.55;
+                face5[3].rotation.x = -Math.PI / 2;
+                face5[4].position.x = -.55;
+                face5[4].position.y = 1.0001;
+                face5[4].position.z = .55;
+                face5[4].rotation.x = -Math.PI / 2;
+
+                face6[0].position.x = -.45;
+                face6[0].position.y = -1.0001;
+                face6[0].position.z = -.55;
+                face6[0].rotation.x = Math.PI / 2;
+                face6[1].position.x = .45;
+                face6[1].position.y = -1.0001;
+                face6[1].position.z = .55;
+                face6[1].rotation.x = Math.PI / 2;
+                face6[2].position.x = .45;
+                face6[2].position.y = -1.0001;
+                face6[2].position.z = -.455;
+                face6[2].rotation.x = Math.PI / 2;
+                face6[3].position.x = -.45;
+                face6[3].position.y = -1.0001;
+                face6[3].position.z = .55;
+                face6[3].rotation.x = Math.PI / 2;
+                face6[4].position.x = -.45;
+                face6[4].position.y = -1.0001;
+                face6[4].position.z = 0;
+                face6[4].rotation.x = Math.PI / 2;
+                face6[5].position.x = .45;
+                face6[5].position.y = -1.0001;
+                face6[5].position.z = 0;
+                face6[5].rotation.x = Math.PI / 2;
+            }
+        }
+        myScene1.prototype = new SimpleScene;
+        new myScene1().init('myScene1_id');
+    </script>
+    
+</body>
+</html>
