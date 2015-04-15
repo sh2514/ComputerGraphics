@@ -8,6 +8,7 @@ Assignment 9
 
 References:
     http://stackoverflow.com/questions/22689898/three-js-checkerboard-plane
+    http://stackoverflow.com/questions/14057388/how-to-change-the-camera-position-with-mouse-dragging-in-three-js
 -->
 
 <!DOCTYPE html>
@@ -196,7 +197,7 @@ References:
                 box.position.y = -.9;
                 box.position.z = 1;
                 box.rotation.x = -Math.PI / 2.5;
-                box.rotation.z = Math.PI / 4.5;
+                //box.rotation.z = Math.PI / 4.5;
 
                 environment.add(plane);
             }
@@ -204,27 +205,29 @@ References:
             this.update = function () {
                 if (!inAir && mouseDown) {
                     inAir = true;
-                    box.rotation.x += Math.PI / 2.5;
-                    box.rotation.z += -Math.PI / 4.5;
-                    currentXRotSpd = Math.random() * .15 + .1;
-                    currentYRotSpd = Math.random() * .15 + .1;
                     startTime = time;
                 }
 
                 if (inAir) {
                     var randFactor = 1 + Math.floor(Math.random() * 4);
-                    box.rotation.x += 2 * Math.PI / 4 * randFactor;
-                    //box.rotation.z += 2 * Math.PI / 4 * randFactor;
+
+                    box.rotation.z += 0.02;
+                    box.rotation.x += 0.02;
+
+                    //box.rotation.x += 2 * Math.PI / 4;
+                    //box.rotation.z += 2 * Math.PI / 4;
                     box.position.y = Math.abs(Math.sin((time - startTime) * 1.4) * 30) * Math.pow(.6, time - startTime) - .9;
 
                     if (time - startTime > 6.7) {
                         inAir = false;
                         box.position.y = -.9;
+
+                        //box.rotation.x += (2 * Math.PI / 4 * randFactor);
+                        //box.rotation.y += (2 * Math.PI / 4 * randFactor);
                     }
                 }
 
-                //box.rotation.x -= 0.02;
-                //box.rotation.y += 0.02;
+                
 
                 spdX = (screenH / 2 - mouseX) / 2000;
                 spdY = (screenW / 2 - mouseY) / 2000;
