@@ -37,7 +37,7 @@ References:
                 // CREATE THE WEBGL RENDERER, AND ATTACH IT TO THE DOCUMENT BODY.
 
                 var renderer = new THREE.WebGLRenderer({ alpha: true });
-                renderer.setSize(600, 600);
+                renderer.setSize(700, 700);
                 document.getElementById(name).appendChild(renderer.domElement);
 
                 // CALL THE USER'S SETUP FUNCTION JUST ONCE.
@@ -57,7 +57,13 @@ References:
         };
     </script>
 
-    <div id='myScene1_id'></div>
+    <table>
+        <tr>
+            <td id="myScene1_id"></td>
+            <td>Click to roll dice.</td>
+        </tr>
+    </table>
+
     <script>
         var screenW = 600;
         var screenH = 600;
@@ -197,7 +203,7 @@ References:
                 box.position.y = -.9;
                 box.position.z = 1;
                 box.rotation.x = -Math.PI / 2.5;
-                //box.rotation.z = Math.PI / 4.5;
+                box.rotation.z = Math.PI / 4.5;
 
                 environment.add(plane);
             }
@@ -305,7 +311,7 @@ References:
                 face6[1].rotation.x = Math.PI / 2;
                 face6[2].position.x = .45;
                 face6[2].position.y = -1.0001;
-                face6[2].position.z = -.455;
+                face6[2].position.z = -.55;
                 face6[2].rotation.x = Math.PI / 2;
                 face6[3].position.x = -.45;
                 face6[3].position.y = -1.0001;
