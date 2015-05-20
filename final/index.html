@@ -60,6 +60,7 @@ Final Project
                 <ul>
                     <li>WAD or arrow keys to move.  A and D to move left and right.  W to jump.</li>
                     <li>Hold A or D to run and accelerate to jump higher and further.</li>
+                    <li>Press E to laugh.</li>
                     <li>Left click and hold to tilt level.</li>
                 </ul>
                 <ul>
@@ -169,7 +170,7 @@ Final Project
 
         var endPosForLevel = [
             [0, 31, 5],
-            [0, 82],
+            [0, 87],
             [0, 94],
             [0, 29],
             [0, 108],
@@ -940,7 +941,7 @@ Final Project
                             switch (parseInt(level[i][j])) {
                                 case 99:    // Empty impassable block
                                     break;
-                                case 11:    // 7x Wood block
+                                /*case 11:    // 7x Wood block
                                     var imageTexture = THREE.ImageUtils.loadTexture('images/wood1.jpg');
                                     var imageMaterial = new THREE.MeshBasicMaterial({ map: imageTexture });
                                     for (var k = 0; k < 7; k++) {
@@ -1065,7 +1066,7 @@ Final Project
                                             scene.add(newLevelBlock);
                                         }   
                                     }
-                                    break;
+                                    break;*/
                                 default:
                                     for (var k = 0; k < 4; k++) {
                                         var newLevelBlock = new THREE.Mesh(geometry, greenMaterial);
@@ -1143,7 +1144,7 @@ Final Project
                 environment.position.z = cameraPos[currentLevel][2];
 
                 switch (parseInt(currentLevel)) {
-                    case 0:
+                    /*case 0:
                         this.scene.remove(backgroundImage);
                         var backgroundGeometry = new THREE.PlaneGeometry(50, 50);
                         var imageTexture = THREE.ImageUtils.loadTexture('images/title.jpg');
@@ -1196,7 +1197,7 @@ Final Project
                         backgroundImage = new THREE.Mesh(backgroundGeometry, imageMaterial);
                         backgroundImage.position.z -= 10;
                         this.scene.add(backgroundImage);
-                        break;
+                        break;*/
                 }
                 // Reset key variables
                 loadLevel = false;
