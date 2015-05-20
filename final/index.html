@@ -58,8 +58,9 @@ Final Project
             <td id="myScene1_id"></td>
             <td>
                 <ul>
-                    <li>WASD to move.</li>
-                    <li>Hold left or right to run and accelerate to jump higher and further.</li>
+                    <li>WAD or arrow keys to move.  A and D to move left and right.  W to jump.</li>
+                    <li>Hold A or D to run and accelerate to jump higher and further.</li>
+                    <li>Left click and hold to tilt level.</li>
                 </ul>
             </td>
         </tr>
@@ -110,12 +111,19 @@ Final Project
         var releaseStart = 0;
         var turnDir = 'right';
         var dead = false;
-        var noAction = false;
+        var noAction = true;
 
         var topJoint, neckJoint, lLegJoint, rLegJoint, lArmJoint, rArmJoint;
         var boxGeometry, headGeometry, hatGeometry, headBandGeometry, frameGeometry, lensGeometry, earGeometry, eyeSpotGeometry, eyeGeometry, bodyGeometry, scarfGeometry, bagBodyGeometry, bagTopGeometry, legGeometry, armGeometry, gloveGeometry;
         var box, head, hat, headBand, lFrame, rFrame, lLens, rLens, lEar, rEar, lEyeSpot, rEyeSpot, lEye, rEye, body, scarf, bagBody, bagTop, lLeg, rLeg, lArm, rArm, lGlove, rGlove;
-        var levelDisplay, livesDisplay, timerDisplay, scoreDisplay;
+        var levelDisplay, livesDisplay, timerDisplay, scoreDisplay, messageDisplay;
+
+        var loadScreenGeometry = new THREE.PlaneGeometry(30, 30);
+        //var loadTexture = THREE.ImageUtils.loadTexture('images/loading.jpg');
+        //var loadMaterial = new THREE.MeshBasicMaterial({ map: imageTexture });
+        var blackMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+        var loadImage = new THREE.Mesh(loadScreenGeometry, blackMaterial);
+        loadImage.position.z += 9;
 
         var map;
         var loadLevel = false;
@@ -123,12 +131,20 @@ Final Project
         var timer = -1;
         var lives = 10;
         var score = 0;
-        var currentLevel = 1;
+        var currentLevel = 0;
         var maxLevel = 5;
+
+        var start = false;
+        var gameOver = false;
+        var loading = false;
+        var loadStart = 0;
+        var resetLevel = false;
+        var goPrevLevel = false;
+        var goNextLevel = false;
 
         //var level1 = [[1, 1, 0, 1, 1], [1, 0, 0, 0, 1], [0, 0, 0, 0, 0], [1, 1, 0, 1, 0], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]];
         var startPosForLevel = [
-            [2, 5],
+            [8, 4],
             [9, 5],
             [10, 3],
             [9, 3],
@@ -146,12 +162,12 @@ Final Project
         ]
 
         var cameraPos = [
-            [0, -6],
-            [-9, -6],
-            [-9, -6],
-            [-8, -6],
-            [-8, -9],
-            [-9, -6],
+            [-10, -5, 4],
+            [-9, -6, 0],
+            [-9, -6, 0],
+            [-8, -6, 0],
+            [-8, -9, 0],
+            [-9, -6, 0],
         ]
 
         var cameraShifts = [
@@ -182,7 +198,7 @@ Final Project
         ]
 
         var levelTime = [
-            [60],
+            [999],
             [60],
             [120],
             [120],
@@ -191,7 +207,7 @@ Final Project
         ]
 
         var levelScore = [
-            [500],
+            [0],
             [2000],
             [2500],
             [5000],
@@ -201,19 +217,13 @@ Final Project
 
         var levels = [
         [
-            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [11, 11, 11, 11, 11, 00, 00, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11],
-            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [00, 00, 00, 11, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [11, 11, 11, 11, 11, 00, 00, 11, 11, 11, 11, 11, 11, 00, 00, 00, 00, 00, 00, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11],
-            [00, 00, 00, 11, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [00, 00, 00, 11, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
-            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+            [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
+            [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
+            [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20],
+            [16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16],
+            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+            [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
         ],
         [
             [17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 00, 00, 00, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17],
@@ -366,9 +376,16 @@ Final Project
                     right = true;
                     break;
                 case 32: // space
+                    start = true;
                     break;
-                case 82: // r
-                    loadLevel = true;
+                case 82: // r 
+                    resetLevel = true;
+                    break;
+                case 188: // comma
+                    goPrevLevel = true;
+                    break;
+                case 190: // period
+                    goNextLevel = true;
                     break;
             }
         };
@@ -400,7 +417,13 @@ Final Project
                 case 32: // space
                     break;
                 case 82: // r
-                    loadLevel = false;
+                    resetLevel = false;
+                    break;
+                case 188: // comma
+                    goPrevLevel = false;
+                    break;
+                case 190: // period
+                    goNextLevel = false;
                     break;
             }
         };
@@ -448,7 +471,9 @@ Final Project
                 levelDisplay.innerHTML = 'LEVEL: ';
                 levelDisplay.style.top = 80 + 'px';
                 levelDisplay.style.left = 20 + 'px';
+                levelDisplay.id = 'levelDisplay';
                 document.body.appendChild(levelDisplay);
+
 
                 livesDisplay = document.createElement('div');
                 livesDisplay.style.position = 'absolute';
@@ -460,6 +485,7 @@ Final Project
                 livesDisplay.innerHTML = 'LIVES: ';
                 livesDisplay.style.top = 120 + 'px';
                 livesDisplay.style.left = 20 + 'px';
+                livesDisplay.id = 'livesDisplay';
                 document.body.appendChild(livesDisplay);
 
                 timerDisplay = document.createElement('div');
@@ -472,6 +498,7 @@ Final Project
                 timerDisplay.innerHTML = 'TIME: ';
                 timerDisplay.style.top = 160 + 'px';
                 timerDisplay.style.left = 20 + 'px';
+                timerDisplay.id = 'timerDisplay';
                 document.body.appendChild(timerDisplay);
 
                 scoreDisplay = document.createElement('div');
@@ -484,7 +511,21 @@ Final Project
                 scoreDisplay.innerHTML = 'SCORE: ';
                 scoreDisplay.style.top = 80 + 'px';
                 scoreDisplay.style.left = 650 + 'px';
+                scoreDisplay.id = 'scoreDisplay';
                 document.body.appendChild(scoreDisplay);
+
+                messageDisplay = document.createElement('div');
+                messageDisplay.style.position = 'absolute';
+                messageDisplay.style.width = 150;
+                messageDisplay.style.height = 100;
+                messageDisplay.style.fontFamily = 'Gotham';
+                messageDisplay.style.color = 'snow';
+                messageDisplay.style.fontSize = '300%';
+                messageDisplay.innerHTML = 'LEVEL START';
+                messageDisplay.style.top = 350 + 'px';
+                messageDisplay.style.left = 350 + 'px';
+                messageDisplay.id = 'messageDisplay';
+                document.body.appendChild(messageDisplay);
 
                 this.updateScore(0);
 
@@ -492,10 +533,75 @@ Final Project
             }
 
             this.update = function () {
-                if (timer === -1) {
+                if (loading) {
+                    if (time - loadStart > 2) {
+                        if (currentLevel !== 0) {
+                            this.scene.remove(loadImage);
+                        }
+                        loading = false;
+                        noAction = false;
+                        messageDisplay.style.top = -350 + 'px';
+                        messageDisplay.style.left = -350 + 'px';
+
+                        // Change BGM if not dead
+                        if (!dead) {
+                            this.commandBGM(1);
+                        }
+                        dead = false;
+                    }
+                }
+
+                // Get and display timer
+                if (timer === -1 && !loading) {
                     this.getLevelTime();
                 }
-                timerDisplay.innerHTML = 'TIME: ' + Math.floor(timer - time);
+                if (!loading) {
+                    timerDisplay.innerHTML = 'TIME: ' + Math.floor(timer - time);
+                }
+                else {
+                    timerDisplay.innerHTML = 'TIME: ';
+                }
+
+                if (currentLevel === 0 && start === true && !loading) {
+                    start = false;
+                    currentLevel++;
+                    this.commandBGM(2);
+                    timer = -1;
+                    this.loadLevel();
+                }
+
+                // RESET OR SKIP LEVEL
+                if (resetLevel && !loading) {
+                    if (currentLevel !== 0) {
+                        this.scene.remove(loadImage);
+                    }
+                    this.commandBGM(2);
+                    timer = -1;
+                    this.loadLevel();
+                    resetLevel = false;
+                }
+                else if (goPrevLevel && !loading) {
+                    if (currentLevel !== 0) {
+                        this.scene.remove(loadImage);
+                    }
+                    if (currentLevel != 0) {
+                        currentLevel--;
+                    }
+                    this.commandBGM(2);
+                    timer = -1;
+                    this.loadLevel();
+                    goPrevLevel = false;
+                }
+                else if (goNextLevel && !loading) {
+                    this.scene.remove(loadImage);
+                    if (currentLevel != maxLevel) {
+                        currentLevel++;
+                    }
+                    this.commandBGM(2);
+                    timer = -1;
+                    this.loadLevel();
+                    goNextLevel = false;
+                }
 
                 // LEVEL CLEARED
                 if (endPosForLevel[currentLevel][0] === 0 &&
@@ -607,6 +713,11 @@ Final Project
 
                 if (stillTurning) {
                     this.turn(turnDir);
+                }
+
+                if (noAction) {
+                    this.walk('rest');
+                    return;
                 }
 
                 if ((!left && !right && !up) || (left && right)) {
@@ -891,10 +1002,16 @@ Final Project
 
             // Loads a level
             this.loadLevel = function () {
-                // Change BGM if not dead
-                if (!dead) {
+                if (currentLevel !== 0) {
+                    loading = true;
+                    loadStart = time;
+                    noAction = true;
+                    this.scene.add(loadImage);
+                }
+                else {
                     this.commandBGM(1);
                 }
+
                 livesDisplay.innerHTML = "LIVES: " + lives;
                 this.scene.remove(environment);
 
@@ -916,9 +1033,18 @@ Final Project
                 this.generateMap(environment, levels[currentLevel]);
                 environment.position.x = cameraPos[currentLevel][0];
                 environment.position.y = cameraPos[currentLevel][1];
+                environment.position.z = cameraPos[currentLevel][2];
 
                 switch (parseInt(currentLevel)) {
                     case 0:
+                        this.scene.remove(backgroundImage);
+                        var backgroundGeometry = new THREE.PlaneGeometry(50, 50);
+                        var imageTexture = THREE.ImageUtils.loadTexture('images/title.jpg');
+                        var imageMaterial = new THREE.MeshBasicMaterial({ map: imageTexture });
+                        backgroundImage = new THREE.Mesh(backgroundGeometry, imageMaterial);
+                        backgroundImage.position.z -= 10;
+                        this.scene.add(backgroundImage);
+                        break;
                     case 1:
                         this.scene.remove(backgroundImage);
                         var backgroundGeometry = new THREE.PlaneGeometry(50, 50);
@@ -963,20 +1089,9 @@ Final Project
                         backgroundImage = new THREE.Mesh(backgroundGeometry, imageMaterial);
                         backgroundImage.position.z -= 10;
                         this.scene.add(backgroundImage);
-
-                        /*// Change background
-                        this.scene.remove(backgroundImage);
-                        var backgroundGeometry = new THREE.PlaneGeometry(50, 50);
-                        var imageTexture = THREE.ImageUtils.loadTexture('images/cloud.jpg');
-                        var imageMaterial = new THREE.MeshBasicMaterial({ map: imageTexture });
-                        var blueMaterial = new THREE.LineBasicMaterial({ color: 0x00c0ff });
-                        backgroundImage = new THREE.Mesh(backgroundGeometry, imageMaterial);
-                        backgroundImage.position.z -= 10;
-                        this.scene.add(backgroundImage);*/
                         break;
                 }
                 // Reset key variables
-                dead = false;
                 loadLevel = false;
                 lastLoaded = time;
                 levelDisplay.innerHTML = 'LEVEL: ' + parseInt(currentLevel);
@@ -990,6 +1105,33 @@ Final Project
                 turnDir = 'right';
                 facing = Math.PI;
                 stillTurning = false;
+
+                if (currentLevel === 0) {
+                    levelDisplay.style.top = -80 + 'px';
+                    levelDisplay.style.left = -20 + 'px';
+                    livesDisplay.style.top = -120 + 'px';
+                    livesDisplay.style.left = -20 + 'px';
+                    timerDisplay.style.top = -160 + 'px';
+                    timerDisplay.style.left = -20 + 'px';
+                    scoreDisplay.style.top = -80 + 'px';
+                    scoreDisplay.style.left = -650 + 'px';
+                    messageDisplay.innerHTML = 'Press SPACE to start';
+                    messageDisplay.style.top = 620 + 'px';
+                    messageDisplay.style.left = 350 + 'px';
+                }
+                else {
+                    levelDisplay.style.top = 80 + 'px';
+                    levelDisplay.style.left = 20 + 'px';
+                    livesDisplay.style.top = 120 + 'px';
+                    livesDisplay.style.left = 20 + 'px';
+                    timerDisplay.style.top = 160 + 'px';
+                    timerDisplay.style.left = 20 + 'px';
+                    scoreDisplay.style.top = 80 + 'px';
+                    scoreDisplay.style.left = 650 + 'px';
+                    messageDisplay.innerHTML = 'LEVEL ' + currentLevel + ' START';
+                    messageDisplay.style.top = 350 + 'px';
+                    messageDisplay.style.left = 350 + 'px';
+                }
             },
 
             this.loadCharacter = function () {
