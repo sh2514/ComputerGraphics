@@ -78,6 +78,7 @@ Final Project
         var soundLaugh;
         var soundDead;
         var soundGameOver;
+        var soundCongrat;
         var graphic = document.getElementById("myScene1_id");
         var screenW = 1050;
         var screenH = 700;
@@ -148,6 +149,8 @@ Final Project
         var gameOver = false;
         var gameOverStart = 0;
         var playedGameOverSound = false;
+        var beatGame = false;
+        var playedCongratSound = false;
         var loading = false;
         var loadStart = 0;
         var resetLevel = false;
@@ -192,7 +195,7 @@ Final Project
         ]
         
         var levelMusic = [
-            ['sounds/mario.mp3'],
+            ['sounds/greengreens.mp3'],
             ['sounds/mario.mp3'],
             ['sounds/gb1.mp3'],
             ['sounds/gb2.mp3'],
@@ -459,15 +462,14 @@ Final Project
             this.setup = function () {
                 soundJump = new Audio('sounds/jump.wav');
                 soundJump.load();
-
                 soundLaugh = new Audio('sounds/laugh2.ogg');
                 soundLaugh.load();
-
                 soundDead = new Audio('sounds/dead.mp3');
                 soundDead.load();
-
                 soundGameOver = new Audio('sounds/gameover.mp3');
                 soundGameOver.load();
+                soundCongrat = new Audio('sounds/victory.mp3');
+                soundCongrat.load();
 
                 document.addEventListener('keydown', onKeyDown, false);
                 document.addEventListener('keyup', onKeyUp, false);
@@ -586,6 +588,25 @@ Final Project
                     return;
                 }
 
+                if (beatGame) {
+                    if (!playedCongratSound) {
+                        soundCongrat.play();
+                        playedCongratSound = true;
+                    }
+                    if (time - gameOverStart > 5) {
+                        playedCongratSound = false;
+                        beatGame = false;
+                        this.scene.remove(loadImage);
+                        lives = 10;
+                        score = 0;
+                        currentLevel = 0;
+                        this.resetScore();
+
+                        timer = -1;
+                        this.loadLevel();
+                    } 
+                }
+
                 if (loading) {
                     if (time - loadStart > 2) {
                         if (currentLevel !== 0) {
@@ -663,6 +684,9 @@ Final Project
                     if (currentLevel < maxLevel) {
                         currentLevel++;
                     }
+                    else {
+                        beatGame = true;
+                    }
                     this.commandBGM(2);
                     timer = -1;
                     this.updateScore(levelScore[currentLevel - 1]);
@@ -674,6 +698,9 @@ Final Project
                     endPosForLevel[currentLevel][2] - 1 < box.position.y && time - lastLoaded > 1) {
                     if (currentLevel < maxLevel) {
                         currentLevel++;
+                    }
+                    else {
+                        beatGame = true;
                     }
                     this.commandBGM(2);
                     timer = -1;
@@ -1065,11 +1092,10 @@ Final Project
                 else {
                     this.commandBGM(1);
                 }
-                if (lives === 0) {
+                if (lives === 0 || beatGame) {
                     this.commandBGM(2);
                     loading = false;
                     noAction = false;
-                    gameOver = true;
                     gameOverStart = time;
                     levelDisplay.style.top = -80 + 'px';
                     levelDisplay.style.left = -20 + 'px';
@@ -1079,9 +1105,17 @@ Final Project
                     timerDisplay.style.left = -20 + 'px';
                     scoreDisplay.style.top = -80 + 'px';
                     scoreDisplay.style.left = -650 + 'px';
-                    messageDisplay.innerHTML = 'GAME OVER';
-                    messageDisplay.style.top = 350 + 'px';
-                    messageDisplay.style.left = 350 + 'px';
+                    if (lives === 0) {
+                        gameOver = true;
+                        messageDisplay.innerHTML = 'GAME OVER';
+                        messageDisplay.style.top = 350 + 'px';
+                        messageDisplay.style.left = 350 + 'px';
+                    }
+                    else {
+                        messageDisplay.innerHTML = 'CONGRATULATIONS!<br />YOU HAVE BEATEN THE GAME!';
+                        messageDisplay.style.top = 350 + 'px';
+                        messageDisplay.style.left = 100 + 'px';
+                    }
                     return;
                 }
 
